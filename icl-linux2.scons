@@ -1,0 +1,48 @@
+
+# Matthieu Brucher
+# Last Change : 2009-05-19 14:32
+
+import os
+import re
+
+opts = {'1' : '',
+        '2' : '-xW -axP',
+        '3' : '-xT',
+        }
+
+Import('env')
+
+env.Append(CCFLAGS='-g -sox -wd1572,981,383')
+
+if env['debug']:
+    env.Prepend(CCFLAGS='-debug full -Wall -ftrapuv')
+if env['optimized']:
+    env.Append(CCFLAGS='-O3 -no-prec-div -ansi-alias -ftz -DNDEBUG -vec-report3')
+    env.Append(CCFLAGS=opts[env['optlevel']])
+
+if env['profile']:
+    env.Append(CCFLAGS='-g')
+    env.Append(FORTRANFLAGS='-g')
+    env.Append(F77FLAGS='-g')
+    env.Append(F90FLAGS='-g')
+    env.Append(F95FLAGS='-g')
+
+env['boost'] = 'il'
+
+env.Tool('icl', topdir = os.environ['PATH'])
+
+env['SWIGCFILESUFFIX'] = '_wrap.icl$CFILESUFFIX'
+env['SWIGCXXFILESUFFIX'] = '_wrap.icl$CXXFILESUFFIX'
+
+env['no_exception_flag'] = ['-fno-exceptions', ]
+
+Export('env')
+env = SConscript('common.scons')
+Export('env')
+env = SConscript('boost-linux2.scons')
+
+# Corrections specifiques de la configuration standard
+
+env['MATH_LIBS'] = ['imf', 'svml']
+
+Return('env')

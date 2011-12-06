@@ -1,0 +1,104 @@
+/* -*- C -*-  (not really, but good for syntax highlighting) */
+
+// Matthieu Brucher
+// Last Change : 2009-05-17 18:38
+
+#ifdef SWIGPYTHON
+
+%{
+#include "IRT/primitives.h"
+%}
+
+%typemap(in)
+    (IRT::Vector3df&)
+    (PyArrayObject* array=NULL)
+{
+  array = obj_to_array_no_conversion($input, DataTypeKind);
+  if (!array || !require_dimensions(array, 1) || (array->dimensions[0] != 3)) SWIG_fail;
+
+  $1 = new IRT::Vector3df(reinterpret_cast<IRT::DataType*>(array->data));
+}
+%typemap(freearg)
+    (IRT::Vector3df&)
+{
+  delete $1;
+}
+
+%typemap(in)
+    (IRT::Point3df&)
+    (PyArrayObject* array=NULL)
+{
+  array = obj_to_array_no_conversion($input, DataTypeKind);
+  if (!array || !require_dimensions(array, 1) || (array->dimensions[0] != 3)) SWIG_fail;
+
+  $1 = new IRT::Point3df(reinterpret_cast<IRT::DataType*>(array->data));
+}
+%typemap(freearg)
+    (IRT::Point3df&)
+{
+  delete $1;
+}
+
+%typemap(in)
+    (IRT::Color&)
+    (PyArrayObject* array=NULL)
+{
+  array = obj_to_array_no_conversion($input, DataTypeKind);
+  if (!array || !require_dimensions(array, 1) || (array->dimensions[0] != static_cast<long>(IRT::nbColors))) SWIG_fail;
+
+  $1 = new IRT::Color(reinterpret_cast<IRT::DataType*>(array->data));
+}
+%typemap(freearg)
+    (IRT::Color&)
+{
+  delete $1;
+}
+
+%typemap(in) IRT::Primitive*
+{
+  if ((SWIG_ConvertPtr($input,(void **)(&$1),$1_descriptor, SWIG_POINTER_EXCEPTION | SWIG_POINTER_DISOWN)) == -1) SWIG_fail;
+}
+
+%typemap(out) IRT::Primitive*
+{
+  $result = SWIG_NewPointerObj($1, $1_descriptor, SWIG_POINTER_OWN);
+}
+
+%typemap(in) IRT::Light*
+{
+  if ((SWIG_ConvertPtr($input,(void **)(&$1),$1_descriptor, SWIG_POINTER_EXCEPTION | SWIG_POINTER_DISOWN)) == -1) SWIG_fail;
+}
+
+%typemap(out) IRT::Light*
+{
+  $result = SWIG_NewPointerObj($1, $1_descriptor, SWIG_POINTER_OWN);
+}
+
+namespace IRT
+{
+  class Primitive
+  {
+  public:
+    ~Primitive();
+    void setColor(IRT::Color& color);
+    void setReflection(float reflection);
+    void setDiffuse(float diffuse);
+  };
+
+  class Sphere: public Primitive
+  {
+  public:
+    Sphere(IRT::Vector3df& ray, float dist);
+    ~Sphere();
+  };
+
+  
+  class Box: public Primitive
+  {
+  public:
+    Box(IRT::Vector3df& corner1, IRT::Vector3df& corner2);
+    ~Box();
+  };
+}
+
+#endif /* SWIGPYTHON */

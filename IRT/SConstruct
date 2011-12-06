@@ -1,0 +1,26 @@
+
+import sys
+
+Import('env')
+
+env2 = env.Clone()
+env2.Append(CCFLAGS="-DIRT_EXPORTS")
+libmain = env2.SharedLibrary('IRT', Glob("*.cpp"))
+libmain = env.Install('$LIBDIR', libmain)
+env['libmain'] = libmain
+
+env.Append(SWIGFLAGS=['-c++'])
+if env['parallel']:
+  libwrapper = env.PythonModule('_IRT', ['IRT.i', ], LIBS=['IRT', ] + env['TBB_LIBS'])
+else:
+  libwrapper = env.PythonModule('_IRT', ['IRT.i', ], LIBS=['IRT', ])
+
+env.Depends(libwrapper, [libmain, ])
+env.Install('$LIBDIR/python%s/site-packages/IRT' % sys.version[:3], libwrapper)
+
+init = env.Python("__init__.py")
+env.Install('$LIBDIR/python%s/site-packages/IRT' % sys.version[:3], init)
+IRT = env.Python("IRT.py")
+env.Install('$LIBDIR/python%s/site-packages/IRT' % sys.version[:3], IRT)
+
+Export('env')

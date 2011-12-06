@@ -1,0 +1,12 @@
+
+import sys
+
+Import('env')
+
+env3 = env.Clone()
+env3.Append(CCFLAGS=['-DBOOST_TEST_DYN_LINK', '-w'])
+if env['parallel']:
+  test = env3.Program('IRT_test_suit', Glob('*test*.cpp'), LIBS=['IRT', 'boost_unit_test_framework%s' % env['boost_suffix']] + env['TBB_LIBS'], LIBPATH=["../build", ] + env["LIBPATH"])
+else:
+  test = env3.Program('IRT_test_suit', Glob('*test*.cpp'), LIBS=['IRT', 'boost_unit_test_framework%s' % env['boost_suffix']], LIBPATH=["../build", ] + env["LIBPATH"])
+env3.Depends(test, env['libmain'])
