@@ -23,7 +23,7 @@ env.Append(LIBPATH=os.environ['PATH'].split(';'))
 if 'INCLUDE' in os.environ:
   env.Append(CPPPATH=os.environ['INCLUDE'].split(';'))
 
-env['boost'] = 'vc'
+env['boost'] = 'vc100'
 env['SWIG'] = r'c:\swig\swig.exe'
 
 Export('env')
