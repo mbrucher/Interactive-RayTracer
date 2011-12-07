@@ -1,0 +1,7 @@
+
+/.sconsign.dblite
+/build
+/build_test
+/lib
+/custom.py
+*.pyc
