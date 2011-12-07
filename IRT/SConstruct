@@ -19,8 +19,10 @@ env.Depends(libwrapper, [libmain, ])
 env.Install('$LIBDIR/python%s/site-packages/IRT' % sys.version[:3], libwrapper)
 
 init = env.Python("__init__.py")
+env.Install('$LIBDIR/python%s/site-packages/IRT' % sys.version[:3], "__init__.py")
 env.Install('$LIBDIR/python%s/site-packages/IRT' % sys.version[:3], init)
 IRT = env.Python("IRT.py")
 env.Install('$LIBDIR/python%s/site-packages/IRT' % sys.version[:3], IRT)
+env.Install('$LIBDIR/python%s/site-packages/IRT' % sys.version[:3], "IRT.py")
 
 Export('env')

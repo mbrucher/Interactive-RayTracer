@@ -10,7 +10,9 @@
 #include <tbb/tbb.h>
 #endif
 
+#ifdef USE_ANNOTATE
 #include "annotate.h"
+#endif
 
 #include "common.h"
 #include "ray.h"
@@ -159,20 +161,28 @@ namespace IRT
     {
       Ray ray(origin, direction);
       const BoundingBox& bb = scene->getBoundingBox();
+#ifdef USE_ANNOTATE
       ANNOTATE_SITE_BEGIN( draw_scene )
+#endif
       for(unsigned int j = 0; j < pixelHeight; ++j)
       {
         for(unsigned int i = 0; i < pixelWidth; ++i)
         {
+#ifdef USE_ANNOTATE
           ANNOTATE_TASK_BEGIN( ray )
+#endif
           Color final_color = sampler.computeColor(this, bb, ray, i, j);
 
           for(unsigned int k = 0; k < nbColors; ++k)
               screen[nbColors * (j * pixelWidth + i) + k] = final_color(k);
+#ifdef USE_ANNOTATE
           ANNOTATE_TASK_END( ray )
+#endif
         }
       }
+#ifdef USE_ANNOTATE
       ANNOTATE_SITE_END( draw_scene )
+#endif
     }
 #endif
 
