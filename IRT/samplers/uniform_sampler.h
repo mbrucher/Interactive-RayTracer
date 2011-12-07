@@ -3,9 +3,6 @@
  * Describes a uniform sampler
  */
 
-// Matthieu Brucher
-// Last Change: 2009-05-22 23:01
-
 #ifndef UNIFORMSAMPLER
 #define UNIFORMSAMPLER
 
@@ -37,13 +34,13 @@ namespace IRT
 
     Color computeColor(const Raytracer<UniformSampler>* raytracer, const BoundingBox& bb, Ray& ray, int i, int j) const
     {
-      Color final_color(0.);
+      Color final_color = Color::Zero();
       for(float l = -1/2. + inverse_oversampling / 2; l < 1/2.; l += inverse_oversampling)
       {
         for(float k = -1/2. + inverse_oversampling / 2; k < 1/2.; k += inverse_oversampling)
         {
           raytracer->generateRay(i + k, j + l, ray);
-          Color color(0.);
+          Color color = Color::Zero();
           if(raytracer->mustShoot(ray, bb))
           {
             raytracer->computeColor(ray, color);

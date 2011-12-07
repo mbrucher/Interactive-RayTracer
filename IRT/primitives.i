@@ -1,8 +1,5 @@
 /* -*- C -*-  (not really, but good for syntax highlighting) */
 
-// Matthieu Brucher
-// Last Change : 2009-05-17 18:38
-
 #ifdef SWIGPYTHON
 
 %{

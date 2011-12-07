@@ -3,9 +3,6 @@
  * Describes one ray
  */
 
-// Matthieu Brucher
-// Last Change : 2008-01-16 16:02
-
 #ifndef RAY
 #define RAY
 

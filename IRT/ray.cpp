@@ -13,6 +13,7 @@ namespace IRT
   }
 
   Ray::Ray()
+  :origin_(Point3df::Zero()), direction_(Vector3df::Zero())
   {
   }
 

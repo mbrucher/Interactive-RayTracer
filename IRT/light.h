@@ -3,9 +3,6 @@
  * Describes the lights in a scene
  */
 
-// Matthieu Brucher
-// Last Change : 2009-04-05 22:43
-
 #ifndef LIGHT
 #define LIGHT
 

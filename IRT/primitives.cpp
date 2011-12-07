@@ -9,7 +9,7 @@
 namespace IRT
 {
   Primitive::Primitive()
-  :color(1.f), reflection(0), diffuse(0)
+  :color(Color::Constant(1.f)), reflection(0), diffuse(0)
   {
   }
 

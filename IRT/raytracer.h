@@ -71,7 +71,7 @@ namespace IRT
       {
         Ray ray_sec(ray.origin() + dist * ray.direction(), ray.direction() - (ray.direction().dot(caracteristics.normal)) * 2 * caracteristics.normal);
         normalize(ray_sec.direction());
-        Color color_sec(0.);
+        Color color_sec(Color::Zero());
         computeColor(ray_sec, color_sec, level+1);
 
         color += color_sec * primitive->getReflection();
@@ -103,7 +103,7 @@ namespace IRT
    * @param pixelHeight is the number of pixel in a column
    */
     Raytracer(unsigned long pixelWidth, unsigned long pixelHeight)
-    :levels(3), origin(0.), direction(0.), orientation_u(0.), orientation_v(0.), pixelWidth(pixelWidth), pixelHeight(pixelHeight), width(0), height(0)
+    :levels(3), origin(Point3df::Zero()), direction(Vector3df::Zero()), orientation_u(Vector3df::Zero()), orientation_v(Vector3df::Zero()), pixelWidth(pixelWidth), pixelHeight(pixelHeight), width(0), height(0)
     {
       orientation_u(0) = 1.;
       orientation_v(1) = 1.;

@@ -3,9 +3,6 @@
  * Implementation of lights
  */
 
-// Matthieu Brucher
-// Last Change : 2009-04-05 22:43
-
 #include "light.h"
 
 namespace IRT

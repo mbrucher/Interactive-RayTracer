@@ -54,11 +54,11 @@ namespace IRT
 
     Color computeColor(const Raytracer<JitteredSampler>* raytracer, const BoundingBox& bb, Ray& ray, int i, int j) const
     {
-      Color final_color(0.);
+      Color final_color = Color::Zero();
       for(typename std::vector<std::pair<DataType, DataType> >::const_iterator sample = samples.begin(); sample != samples.end(); ++sample)
       {
         raytracer->generateRay(i + sample->first, j + sample->second, ray);
-        Color color(0.);
+        Color color = Color::Zero();
         if(raytracer->mustShoot(ray, bb))
         {
           raytracer->computeColor(ray, color);
