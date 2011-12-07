@@ -71,7 +71,7 @@ namespace IRT
       {
         Ray ray_sec(ray.origin() + dist * ray.direction(), ray.direction() - (ray.direction().dot(caracteristics.normal)) * 2 * caracteristics.normal);
         normalize(ray_sec.direction());
-        Color color_sec(Color::Zero());
+        Color color_sec = Color::Zero();
         computeColor(ray_sec, color_sec, level+1);
 
         color += color_sec * primitive->getReflection();

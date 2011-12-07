@@ -15,6 +15,7 @@ namespace IRT
   /// Carateristic of a primitive at a specific point
   struct MaterialPoint
   {
+    _export_tools MaterialPoint();
     /// Normal of the primitive at a point
     Normal3df normal;
   };
