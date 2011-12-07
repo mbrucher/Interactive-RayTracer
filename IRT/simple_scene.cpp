@@ -16,8 +16,8 @@ namespace IRT
   SimpleScene::SimpleScene()
     :primitives(), lights()
   {
-    bb.corner1 = std::numeric_limits<float>::max();
-    bb.corner2 = std::numeric_limits<float>::min();
+    bb.corner1 = Point3df::Constant(std::numeric_limits<float>::max());
+    bb.corner2 = Point3df::Constant(std::numeric_limits<float>::min());
   }
 
   SimpleScene::~SimpleScene()
@@ -46,22 +46,20 @@ namespace IRT
   {
     return bb;
   }
-  
+
   void SimpleScene::computeBoundingBox()
   {
     std::vector<Primitive*>::iterator it = primitives.begin();
     bb = (*it)->getBoundingBox();
-    
+
     for(++it; it != primitives.end(); ++it)
     {
       BoundingBox bb_bis = (*it)->getBoundingBox();
-      min(bb.corner1, bb_bis.corner1);
-      max(bb.corner2, bb_bis.corner2);
+      bb.corner1 = bb.corner1.array().min(bb_bis.corner1.array());
+      bb.corner2 = bb.corner2.array().max(bb_bis.corner2.array());
     }
-    
-    return;
   }
-  
+
   Light* SimpleScene::getLight(unsigned long index)
   {
     return lights[index];
@@ -83,20 +81,20 @@ namespace IRT
 
   const Color SimpleScene::computeColor(const Point3df& center, const MaterialPoint& caracteristics, const Primitive* primitive)
   {
-    Color t_color(0.);
+    Color t_color = Color::Zero();
     for(std::vector<Light*>::const_iterator it = lights.begin(); it != lights.end(); ++it)
     {
       Vector3df path = (*it)->getCenter() - center;
       float pathSize = sqrt(norm2(path));
-      path.normalize();
+      path = path.cwiseProduct(Vector3df::Constant(1/pathSize));
       Ray ray(center, path);
       if(testCollision(ray, pathSize))
         continue;
 
-      float cosphi = path * caracteristics.normal * primitive->getDiffuse();
+      float cosphi = path.dot(caracteristics.normal) * primitive->getDiffuse();
       if(cosphi < 0.)
         continue;
-      t_color += mult((primitive->getColor() * cosphi), (*it)->computeColor(ray, pathSize));
+      t_color += (primitive->getColor() * cosphi).cwiseProduct((*it)->computeColor(ray, pathSize));
     }
 
     return t_color;
@@ -104,7 +102,7 @@ namespace IRT
 
   bool SimpleScene::testCollision(const Ray& ray, float dist)
   {
-	return (tree.getFirstCollision(ray, dist, 0, dist) != NULL);
+    return (tree.getFirstCollision(ray, dist, 0, dist) != NULL);
   }
 
   unsigned long SimpleScene::addPrimitive(Primitive* primitive)
@@ -113,8 +111,8 @@ namespace IRT
       throw std::out_of_range("Primitive already added");
 
     BoundingBox primitive_bb = primitive->getBoundingBox();
-    min(bb.corner1, primitive_bb.corner1);
-    max(bb.corner2, primitive_bb.corner2);
+    bb.corner1 = bb.corner1.array().min(primitive_bb.corner1.array());
+    bb.corner2 = bb.corner2.array().max(primitive_bb.corner2.array());
 
     primitives.push_back(primitive);
     return primitives.size() - 1;
@@ -146,12 +144,12 @@ namespace IRT
 
     throw std::out_of_range("Light not found!");
   }
-  
+
   const std::vector<Primitive*>& SimpleScene::getPrimitives() const
   {
     return primitives;
   }
-    
+
   KDTree<Primitive>& SimpleScene::getKDTree()
   {
     return tree;

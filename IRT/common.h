@@ -20,22 +20,34 @@
 # define _export_tools
 #endif
 
-#include "../tools/matrix.h"
+#include <eigen3/Eigen/Dense>
 
 namespace IRT
 {
   typedef float DataType;
   /// Type for a vector
-  typedef Tools::Vector<DataType, 3> Vector3df;
+  typedef Eigen::Matrix<DataType, 3, 1> Vector3df;
   /// Type for a point
-  typedef Tools::Vector<DataType, 3> Point3df;
+  typedef Eigen::Matrix<DataType, 3, 1> Point3df;
   /// Type for a normal
-  typedef Tools::Vector<DataType, 3> Normal3df;
+  typedef Eigen::Matrix<DataType, 3, 1> Normal3df;
 
   /// Number of colors
   const unsigned int nbColors = 3;
   /// Typedef for a simple color
-  typedef Tools::Vector<DataType, nbColors> Color;
+  typedef Eigen::Matrix<DataType, nbColors, 1> Color;
+
+  template<class Array>
+  DataType norm2(const Array& array)
+  {
+    return (array.cwiseProduct(array)).sum();
+  }
+
+  template<class Array>
+  void normalize(Array& array)
+  {
+    array /= std::sqrt(norm2(array));
+  }
 }
 
 #endif

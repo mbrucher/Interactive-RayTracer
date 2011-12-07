@@ -39,7 +39,7 @@ namespace IRT
       ray.direction() += orientation_u * (x - pixelWidth / 2);
       ray.direction() += orientation_v * (pixelHeight / 2 - y);
 
-      ray.direction().normalize();
+      normalize(ray.direction());
     }
 
     /**
@@ -69,8 +69,8 @@ namespace IRT
 
       if(level < levels)
       {
-        Ray ray_sec(ray.origin() + dist * ray.direction(), ray.direction() - (ray.direction() * caracteristics.normal) * 2 * caracteristics.normal);
-        ray_sec.direction() *= 1/(sqrt(norm2(ray_sec.direction())));
+        Ray ray_sec(ray.origin() + dist * ray.direction(), ray.direction() - (ray.direction().dot(caracteristics.normal)) * 2 * caracteristics.normal);
+        normalize(ray_sec.direction());
         Color color_sec(0.);
         computeColor(ray_sec, color_sec, level+1);
 
@@ -85,9 +85,9 @@ namespace IRT
       precompWidth = width / pixelWidth;
       precompHeight = height / pixelHeight;
 
-      orientation_v.normalize();
-      orientation_u = orientation_v ^ direction;
-      orientation_u.normalize();
+      normalize(orientation_v);
+      orientation_u = orientation_v.cross(direction);
+      normalize(orientation_u);
       orientation_u *= precompWidth;
       orientation_v *= precompHeight;
     }

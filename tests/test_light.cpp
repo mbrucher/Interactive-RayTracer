@@ -13,20 +13,20 @@ BOOST_AUTO_TEST_SUITE( irt_light_suite )
 
 BOOST_AUTO_TEST_CASE( test_IRT_Light_color )
 {
-  Light* light = new IRT::Light(Vector3df(0.), Vector3df(1.));
+  Light* light = new IRT::Light(Vector3df::Zero(), Vector3df::Constant(1.));
 
-  BOOST_CHECK( all(light->computeColor(Ray(Vector3df(0.), Vector3df(1.)), 1.) == Vector3df(1.)));
-  BOOST_CHECK( all(light->computeColor(Ray(Vector3df(0.), Vector3df(1.)), 2.) == Vector3df(1.) * (1. / 4.)));
+  BOOST_CHECK( (light->computeColor(Ray(Vector3df::Zero(), Vector3df::Constant(1.)), 1.) == Vector3df::Constant(1.)) );
+  BOOST_CHECK( (light->computeColor(Ray(Vector3df::Zero(), Vector3df::Constant(1.)), 2.) == Vector3df::Constant(1.) / 4.) );
 
   delete light;
 }
 
 BOOST_AUTO_TEST_CASE( test_IRT_Light_center )
 {
-  Light* light = new IRT::Light(Vector3df(0.), Vector3df(1.));
+  Light* light = new IRT::Light(Vector3df::Zero(), Vector3df::Constant(1.));
 
-  BOOST_CHECK( all(light->getCenter() == Vector3df(0.)));
-  BOOST_CHECK( all(light->getCenter() == Vector3df(0.)));
+  BOOST_CHECK( (light->getCenter() == Vector3df::Zero()) );
+  BOOST_CHECK( (light->getCenter() == Vector3df::Zero()) );
 
   delete light;
 }

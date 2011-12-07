@@ -3,9 +3,6 @@
  * Describes the bounding box
  */
 
-// Matthieu Brucher
-// Last Change: 2009-05-15 22:47
-
 #ifndef BOUNDINGBOX
 #define BOUNDINGBOX
 
@@ -20,6 +17,11 @@ namespace IRT
     Point3df corner1;
     /// left corner
     Point3df corner2;
+
+    BoundingBox()
+      :corner1(Point3df::Zero()), corner2(Point3df::Zero())
+    {
+    }
 
     /**
      * Computes the entry and exit distances of the ray for this bounding box
@@ -70,7 +72,7 @@ namespace IRT
             tnear = std::numeric_limits<float>::max();
           }
         }
-        
+
         if (tnear > tfar)
         {
           return false;
@@ -83,7 +85,7 @@ namespace IRT
     DataType SAH() const
     {
       Vector3df size = corner2 - corner1;
-      
+
       return 2 * (size(0) * size(1) + size(0) * size(2) + size(1) * size(2));
     }
   };

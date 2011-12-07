@@ -56,7 +56,7 @@ namespace IRT
   {
     DataType A = 1.f;
     const Vector3df& vector = ray.origin() - center;
-    DataType B = -(ray.direction() * vector);
+    DataType B = -(ray.direction().dot(vector));
     DataType C = norm2(vector) - radius * radius;
 
     DataType delta = (B * B - C);
@@ -75,14 +75,14 @@ namespace IRT
     caracteristics.normal = collide - center;
     caracteristics.normal.normalize();
   }
-  
+
   BoundingBox Sphere::getBoundingBox() const
   {
     BoundingBox bb;
-    
-    bb.corner1 = center - radius;
-    bb.corner2 = center + radius;
-    
+
+    bb.corner1 = center.array() - radius;
+    bb.corner2 = center.array() + radius;
+
     return bb;
   }
 
@@ -101,7 +101,7 @@ namespace IRT
     BoundingBox bb;
     bb.corner1 = corner1;
     bb.corner2 = corner2;
-    
+
     bool result = bb.getEntryExitDistances(ray, tnear, tfar);
 
     if(result)
@@ -116,7 +116,7 @@ namespace IRT
   {
     Vector3df collide(ray.origin() + dist * ray.direction());
 
-    caracteristics.normal = 0;
+    caracteristics.normal = Normal3df::Zero();
     for(int i = 0; i < 3; ++i)
     {
       if(std::abs(collide(i) - corner1(i)) <= std::numeric_limits<DataType>::epsilon())
