@@ -12,6 +12,7 @@ opts.Add(BoolVariable('optimized', 'Set to build for optimization', False))
 opts.Add(BoolVariable('profile', 'Set to build for profiling', False))
 opts.Add(PathVariable('prefix', 'Sets the path where the programs and libs will be installed', os.getcwd()))
 opts.Add(BoolVariable('parallel', 'Use parallel library (TBB)', False))
+opts.Add(PathVariable('eigendir', 'Eigen folder path', "."))
 opts.Add('cflags', 'Set the C++ flags', '')
 opts.Add('ldflags', 'Set the linker flags', '')
 opts.Add('tools', 'Set the tool set to use', '')
@@ -55,7 +56,7 @@ Help(opts.GenerateHelpText(env))
 
 import distutils.sysconfig
 import numpy
-env.Append(CPPPATH=[os.getcwd(), distutils.sysconfig.get_python_inc(), numpy.get_include()])
+env.Append(CPPPATH=[os.getcwd(), distutils.sysconfig.get_python_inc(), numpy.get_include(), env["eigendir"] + "/include"])
 env.Append(LIBPATH=[os.sep.join((distutils.sysconfig.get_python_lib(), '..', '..', 'libs')), '.', ])
 #env.Append(CCFLAGS=['-DUSE_ITERATOR_FUNCTIONS'])
 

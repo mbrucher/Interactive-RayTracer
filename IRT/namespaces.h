@@ -3,9 +3,6 @@
  * Gives the description of the namespaces
  */
 
-// Matthieu Brucher
-// Last Change : 2008-01-17 18:22
-
 #ifndef NAMESPACES
 #define NAMESPACES
 
