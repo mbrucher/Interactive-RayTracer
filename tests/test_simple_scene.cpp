@@ -218,6 +218,7 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_testCollision )
 {
   Primitive* primitive = new Sphere(Vector3df(0.), 3.f);
   SimpleScene* scene = new SimpleScene;
+  IRT::BuildKDTree::automatic_build(scene);
 
   unsigned long index = 0;
   BOOST_CHECK_NO_THROW(index = scene->addPrimitive(primitive));
@@ -234,6 +235,7 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_computeColor )
   primitive->setDiffuse(1);
   Light* light = new Light(Vector3df::Constant(5.), Vector3df::Constant(1.));
   SimpleScene* scene = new SimpleScene;
+  IRT::BuildKDTree::automatic_build(scene);
 
   unsigned long index = 0;
   BOOST_CHECK_NO_THROW(index = scene->addLight(light));

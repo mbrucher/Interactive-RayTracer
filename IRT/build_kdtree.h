@@ -33,11 +33,11 @@ namespace IRT
       DataType k2 = 2.0;
       DataType K1 = 1.;
       DataType K2 = .2;
-    
+
       int remaining_depth = static_cast<int>(std::ceil(k1 * std::log(static_cast<DataType>(scene->getPrimitives().size())) + k2));
       int remaining_failures = static_cast<int>(std::ceil(K1 + remaining_depth * K2));
       DataType enhancement_ratio_failure = .75;
-      
+
       custom_build(scene, remaining_depth, remaining_failures, enhancement_ratio_failure);
     }
 

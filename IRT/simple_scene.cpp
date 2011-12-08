@@ -92,11 +92,6 @@ namespace IRT
       if(testCollision(ray, pathSize))
         continue;
 
-      std::cout << "comput" << std::endl;
-      std::cout << center << std::endl;
-      std::cout << path << std::endl;
-      std::cout << caracteristics.normal << std::endl;
-
       float cosphi = path.dot(caracteristics.normal) * primitive->getDiffuse();
       if(cosphi < 0.)
         continue;

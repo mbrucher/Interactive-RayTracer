@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-# Matthieu Brucher
-# Last Change : 2009-05-30 16:57
-
 import os
 import sys
 import threading
@@ -30,7 +27,6 @@ class MainWindow(wx.Frame):
     box.Add(self.glWidget, 0, wx.CENTER)
     box.Add(controlPanel, 1, wx.EXPAND)
     self.SetSizer(box)
-    print "test"
 
     self.statusBar = self.CreateStatusBar()
 

@@ -162,15 +162,15 @@ class MainWindow(QMainWindow):
 
     oversamplingbox = QSpinBox()
     oversamplingbox.setRange(1, 5)
-    oversamplingbox.setValue(2)
     layout_panel.addWidget(oversamplingbox, 6, 1)
     QObject.connect(oversamplingbox, SIGNAL("valueChanged(int)"), self.setOversampling)
+    oversamplingbox.setValue(2)
 
     levelbox = QSpinBox()
     levelbox.setRange(0, 5)
-    levelbox.setValue(3)
     layout_panel.addWidget(levelbox, 7, 1)
     QObject.connect(levelbox, SIGNAL("valueChanged(int)"), self.setLevels)
+    levelbox.setValue(3)
 
     return sidepanel
 
