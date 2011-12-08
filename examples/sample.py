@@ -55,7 +55,7 @@ class Sample(object):
     self.orientation = numpy.array((.0, .1, .0), dtype=numpy.float32)
     self.raytracer.setOrientation(self.orientation)
 
-    self.raytracer.setOversampling(1)
+    self.raytracer.setOversampling(8)
     #self.raytracer.setLevels(0)
 
     self.raytracer.setScene(self.scene)

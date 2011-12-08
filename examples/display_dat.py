@@ -135,7 +135,7 @@ class ParserDat(object):
     self.textures = {}
     self.lights = []
     self.objects = []
-    
+
     self.state = [None]
 
   def parse(self):
@@ -148,16 +148,16 @@ class ParserDat(object):
   def handle_line(self, elements):
     if self.state[-1] in ParserDat.handle:
       ParserDat.handle[self.state[-1]](self, elements)
-  
+
   def populate(self, scene):
     self.populate_lights(scene)
     self.populate_objects(scene)
-  
+
   def populate_lights(self, scene):
     for object in self.lights:
       light = IRT.Light(object['CENTER'], object['COLOR'])
       scene.addLight(light)
-  
+
   def populate_objects(self, scene):
     for object in self.objects:
       if object['type'] == 'SPHERE':
@@ -181,7 +181,7 @@ class ParserDat(object):
     #IRT.BuildKDTree.custom_build(scene, 0, 0, 0)
     IRT.BuildKDTree.automatic_build(scene)
     return raytracer
-  
+
   def create_image(self, raytracer):
     import time
     screen = numpy.zeros((self.raytracer_params['RESOLUTION'][0], self.raytracer_params['RESOLUTION'][1], 3), dtype=numpy.float32)
@@ -192,7 +192,7 @@ class ParserDat(object):
 
 def parse_dat(file):
   scene = IRT.SimpleScene()
-  
+
   parser = ParserDat(file)
   parser.parse()
   parser.populate(scene)

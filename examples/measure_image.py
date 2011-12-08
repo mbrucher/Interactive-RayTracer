@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 
-# Matthieu Brucher
-# Last Change : 2009-05-30 16:54
-
 import numpy
 import sample
-  
+import IRT
+
 s = sample.Sample()
 s.setRaytracer(IRT.Raytracer_Uniform)
 
