@@ -74,7 +74,7 @@ namespace IRT
   protected:
     unsigned int oversampling;
     DataType inverse_oversampling;
-    
+
     std::vector<std::pair<DataType, DataType> > samples;
   };
 }

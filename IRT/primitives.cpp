@@ -59,7 +59,6 @@ namespace IRT
 
   bool Sphere::intersect(const Ray& ray, DataType& dist) const
   {
-    DataType A = 1.f;
     const Vector3df& vector = ray.origin() - center;
     DataType B = -(ray.direction().dot(vector));
     DataType C = norm2(vector) - radius * radius;
@@ -68,7 +67,7 @@ namespace IRT
 
     if (delta < 0.f)
       return false;
-    DataType disc = sqrt(delta);
+    DataType disc = std::sqrt(delta);
     if ((dist = (B - disc)) < 0.)
       dist = (B + disc);
     return true;
@@ -76,8 +75,7 @@ namespace IRT
 
   void Sphere::computeColorNormal(const Ray& ray, DataType dist, MaterialPoint& caracteristics) const
   {
-    Vector3df collide(ray.origin() + dist * ray.direction());
-    caracteristics.normal = collide - center;
+    caracteristics.normal = ray.origin() + dist * ray.direction() - center;
     normalize(caracteristics.normal);
   }
 

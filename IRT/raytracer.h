@@ -35,7 +35,7 @@ namespace IRT
      */
     void generateRay(float x, float y, Ray& ray) const
     {
-      ray.direction() = direction + orientation_u * (x - pixelWidth / 2) + orientation_v * (pixelHeight / 2 - y);
+      ray.direction() = direction + orientation_u * (x - precompWidth) + orientation_v * (precompHeight - y);
 
       normalize(ray.direction());
     }
@@ -80,14 +80,14 @@ namespace IRT
     /// Updates the parameters of the raytracer
     void updateParameters()
     {
-      precompWidth = width / pixelWidth;
-      precompHeight = height / pixelHeight;
+      precompWidth = pixelWidth / 2;
+      precompHeight = pixelHeight / 2;
 
       normalize(orientation_v);
       orientation_u = orientation_v.cross(direction);
       normalize(orientation_u);
-      orientation_u *= precompWidth;
-      orientation_v *= precompHeight;
+      orientation_u *= width / pixelWidth;
+      orientation_v *= height / pixelHeight;
     }
 
     /// Maximum recursion level
