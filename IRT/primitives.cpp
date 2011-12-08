@@ -12,7 +12,7 @@ namespace IRT
   :normal(Normal3df::Zero())
   {
   }
-  
+
   Primitive::Primitive()
   :color(Color::Constant(1.f)), reflection(0), diffuse(0)
   {
@@ -78,7 +78,7 @@ namespace IRT
   {
     Vector3df collide(ray.origin() + dist * ray.direction());
     caracteristics.normal = collide - center;
-    caracteristics.normal.normalize();
+    normalize(caracteristics.normal);
   }
 
   BoundingBox Sphere::getBoundingBox() const
@@ -134,7 +134,7 @@ namespace IRT
       }
     }
   }
-  
+
   BoundingBox Box::getBoundingBox() const
   {
     BoundingBox bb;

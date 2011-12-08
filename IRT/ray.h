@@ -21,12 +21,15 @@ namespace IRT
 
   public:
     /// Simple constructor
-    _export_tools Ray(const Point3df& origin, const Vector3df& direction);
+    Ray(const Point3df& origin, const Vector3df& direction)
+      :origin_(origin), direction_(direction)
+    {
+    }
     /// Simple constructor
-    _export_tools Ray();
-
-    /// Destructor
-    _export_tools ~Ray();
+    Ray()
+      :origin_(Point3df::Zero()), direction_(Vector3df::Zero())
+    {
+    }
 
     /// Returns the origin of the ray
     const Point3df& origin() const

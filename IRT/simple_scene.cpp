@@ -3,6 +3,7 @@
  * Implementation of the simple scene
  */
 
+#include <iostream>
 #include <stdexcept>
 
 #include "simple_scene.h"
@@ -81,15 +82,20 @@ namespace IRT
 
   const Color SimpleScene::computeColor(const Point3df& center, const MaterialPoint& caracteristics, const Primitive* primitive)
   {
-    Color t_color = Color::Zero();
+    Color t_color(Color::Zero());
     for(std::vector<Light*>::const_iterator it = lights.begin(); it != lights.end(); ++it)
     {
       Vector3df path = (*it)->getCenter() - center;
-      float pathSize = sqrt(norm2(path));
+      float pathSize = std::sqrt(norm2(path));
       path = path.cwiseProduct(Vector3df::Constant(1/pathSize));
       Ray ray(center, path);
       if(testCollision(ray, pathSize))
         continue;
+
+      std::cout << "comput" << std::endl;
+      std::cout << center << std::endl;
+      std::cout << path << std::endl;
+      std::cout << caracteristics.normal << std::endl;
 
       float cosphi = path.dot(caracteristics.normal) * primitive->getDiffuse();
       if(cosphi < 0.)

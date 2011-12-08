@@ -45,7 +45,7 @@ namespace IRT
      * @param caracteristics is a the caracteristics of the primitive at this point
      */
     virtual void computeColorNormal(const Ray& ray, DataType dist, MaterialPoint& caracteristics) const = 0;
-    
+
     /**
      * Returns the bounding box of the primitive
      * @return the bounding box
@@ -59,7 +59,7 @@ namespace IRT
     _export_tools void setColor(const Color& color);
 
     _export_tools const Color& getColor() const;
-    
+
     /**
       * Sets the reflection parameters of the sphere
       * @param reflection is the reflection "color" of the sphere

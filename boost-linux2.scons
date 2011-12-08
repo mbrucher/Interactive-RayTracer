@@ -1,7 +1,4 @@
 
-# Matthieu Brucher
-# Last Change : 2009-05-19 14:30
-
 import os.path
 import glob
 

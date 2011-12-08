@@ -35,9 +35,7 @@ namespace IRT
      */
     void generateRay(float x, float y, Ray& ray) const
     {
-      ray.direction() = direction;
-      ray.direction() += orientation_u * (x - pixelWidth / 2);
-      ray.direction() += orientation_v * (pixelHeight / 2 - y);
+      ray.direction() = direction + orientation_u * (x - pixelWidth / 2) + orientation_v * (pixelHeight / 2 - y);
 
       normalize(ray.direction());
     }
@@ -287,7 +285,7 @@ namespace IRT
     {
       for ( int i = 0; i < 3; ++i )
       {
-        if (ray.direction()(i) < 0) 
+        if (ray.direction()(i) < 0)
         {
           if (ray.origin()(i) < bb.corner1(i))
           {

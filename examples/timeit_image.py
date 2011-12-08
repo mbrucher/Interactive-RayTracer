@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-# Matthieu Brucher
-# Last Change : 2009-05-30 16:54
-
 import timeit
 
 setup="""import numpy

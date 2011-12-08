@@ -1,7 +1,4 @@
 
-# Matthieu Brucher
-# Last Change : 2009-05-19 14:32
-
 import os
 import re
 
@@ -17,7 +14,7 @@ env.Append(CCFLAGS='-g -sox -wd1572,981,383')
 if env['debug']:
     env.Prepend(CCFLAGS='-debug full -Wall -ftrapuv')
 if env['optimized']:
-    env.Append(CCFLAGS='-O3 -no-prec-div -ansi-alias -ftz -DNDEBUG -vec-report3')
+    env.Append(CCFLAGS='-O3 -no-prec-div -ansi-alias -ftz -DNDEBUG -vec-report3 -std=c++0x')
     env.Append(CCFLAGS=opts[env['optlevel']])
 
 if env['profile']:
