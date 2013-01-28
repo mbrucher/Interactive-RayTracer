@@ -1,7 +1,4 @@
 
-# Matthieu Brucher
-# Last Change : 2009-05-19 14:34
-
 import os
 import os.path
 import sys
@@ -43,6 +40,8 @@ elif sys.platform == "win32":
   env = SConscript('msvc-win32.scons')
 elif sys.platform == "linux2":
   env = SConscript('gcc-linux2.scons')
+elif sys.platform == "darwin":
+  env = SConscript('gcc-darwin.scons')
 
 if sys.platform == "win32":
   env['SWIG'] = r"c:\swig\swig.exe"
@@ -52,13 +51,15 @@ if env['parallel'] == True:
     env = SConscript('tbb-win32.scons')
   elif sys.platform == "linux2":
     env = SConscript('tbb-linux2.scons')
+  elif sys.platform == "linux2":
+    env = SConscript('tbb-darwin.scons')
 
 Help(opts.GenerateHelpText(env))
 
 import distutils.sysconfig
 import numpy
 env.Append(CPPPATH=[os.getcwd(), distutils.sysconfig.get_python_inc(), numpy.get_include(), env["eigendir"], env["boostdir"]])
-env.Append(LIBPATH=[os.sep.join((distutils.sysconfig.get_python_lib(), '..', '..', 'libs')), '.', ])
+env.Append(LIBPATH=[distutils.sysconfig.get_python_lib(standard_lib=True), '.', ])
 #env.Append(CCFLAGS=['-DUSE_ITERATOR_FUNCTIONS'])
 
 if env['cflags']:

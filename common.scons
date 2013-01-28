@@ -21,14 +21,20 @@ def SWIGSharedLibrary(env, library, sources, **args):
   else:
     sourcesbis = sources
 
+  if "LIBS" not in args:
+    args["LIBS"] = []
+
+  args["LIBS"].append("${SHLIBPREFIX}python%i.%i${SHLIBSUFFIX}" % (sys.version_info.major, sys.version_info.minor))
+
   if 'SWIGFLAGS' in args:
     args['SWIGFLAGS'] += ['-python']
   else:
     args['SWIGFLAGS'] = ['-python'] + env['SWIGFLAGS']
   args['SHLIBPREFIX']=""
   if sys.platform[:3] == "win":
-    if sys.version >= '2.5':
-      args['SHLIBSUFFIX']=".pyd"
+    args['SHLIBSUFFIX'] = ".pyd"
+  if sys.platform == "darwin":
+    args['SHLIBSUFFIX'] = ".so"
 
   cat=env.SharedLibrary(library, sourcesbis, **args)
   return cat
