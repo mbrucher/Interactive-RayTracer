@@ -9,8 +9,8 @@ if env['debug']:
     env.Append(CFLAGS='-g -Wall')
     env.Append(CXXFLAGS='-g -Wall')
 if env['optimized']:
-    env.Append(CFLAGS='-O3 -no-prec-div -fno-alias -fno-fnalias -ftz -fargument-noalias-global')
-    env.Append(CXXFLAGS='-O3 -no-prec-div -fno-alias -fno-fnalias -ftz -fargument-noalias-global')
+    env.Append(CFLAGS='-O3 -no-prec-div -fargument-noalias-global')
+    env.Append(CXXFLAGS='-O3 -no-prec-div -fargument-noalias-global')
 
 if env['profile']:
     env.Append(CFLAGS='-g')
