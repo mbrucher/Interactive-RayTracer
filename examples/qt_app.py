@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-# Matthieu Brucher
-# Last Change : 2009-06-12 16:20
-
 import os
 import sys
 import numpy
@@ -11,9 +8,14 @@ import math
 
 import IRT
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtOpenGL import *
+try:
+  from PySide.QtCore import *
+  from PySide.QtGui import *
+  from PySide.QtOpenGL import *
+except:
+  from PyQt4.QtCore import *
+  from PyQt4.QtGui import *
+  from PyQt4.QtOpenGL import *
 
 import OpenGL.GL as GL
 from sample import Sample
@@ -179,7 +181,8 @@ class IRTGLWidget(QGLWidget):
   The OpenGL Widget that contains the IRT view
   """
   def __init__(self, parent, mainWindow):
-    super(QGLWidget, self).__init__(parent)
+    #super(QGLWidget, self).__init__(parent)
+    QGLWidget.__init__(self, parent)
 
     self.setFixedSize(640, 480)
     self.thread = IRTThread(self, 640, 480, mainWindow)
