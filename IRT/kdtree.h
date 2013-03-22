@@ -106,7 +106,7 @@ namespace IRT
           }
         }
 
-        if(!min_primitive == NULL)
+        if(!(min_primitive == NULL))
         {
           dist = min_dist;
         }
