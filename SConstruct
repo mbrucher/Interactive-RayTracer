@@ -63,7 +63,11 @@ if sys.platform == "win32":
   env.Append(CPPPATH=os.environ["INCLUDE"].split(";"))
 else:
   env.Append(CPPPATH=os.environ["INCLUDE"].split(":"))
-env.Append(LIBPATH=[distutils.sysconfig.get_python_lib(standard_lib=True), '.', ])
+if sys.platform == "darwin":
+  env.Append(LIBPATH=[distutils.sysconfig.get_python_lib(standard_lib=True) + os.sep + 'config', '.', ])
+else:
+  env.Append(LIBPATH=[distutils.sysconfig.get_python_lib(standard_lib=True), '.', ])
+
 #env.Append(CCFLAGS=['-DUSE_ITERATOR_FUNCTIONS'])
 
 if env['cflags']:
