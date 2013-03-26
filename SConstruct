@@ -59,6 +59,10 @@ Help(opts.GenerateHelpText(env))
 import distutils.sysconfig
 import numpy
 env.Append(CPPPATH=[os.getcwd(), distutils.sysconfig.get_python_inc(), numpy.get_include(), env["eigendir"], env["boostdir"]])
+if sys.platform == "win32":
+  env.Append(CPPPATH=os.environ["INCLUDE"].split(";"))
+else:
+  env.Append(CPPPATH=os.environ["INCLUDE"].split(":"))
 env.Append(LIBPATH=[distutils.sysconfig.get_python_lib(standard_lib=True), '.', ])
 #env.Append(CCFLAGS=['-DUSE_ITERATOR_FUNCTIONS'])
 
