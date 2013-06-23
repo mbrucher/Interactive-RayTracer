@@ -1,0 +1,7 @@
+
+Import('env')
+
+env['CPPDEFINES'] += ["USE_TBB", ]
+env['TBB_LIBS'] = ["tbb", "tbbmalloc", ]
+
+Return('env')

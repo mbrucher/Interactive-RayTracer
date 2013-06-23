@@ -51,7 +51,7 @@ if env['parallel'] == True:
     env = SConscript('tbb-win32.scons')
   elif sys.platform == "linux2":
     env = SConscript('tbb-linux2.scons')
-  elif sys.platform == "linux2":
+  elif sys.platform == "darwin":
     env = SConscript('tbb-darwin.scons')
 
 Help(opts.GenerateHelpText(env))
