@@ -42,7 +42,7 @@ class MainWindow(QMainWindow):
 
     self.dirty = False
 
-    self.connect(self, SIGNAL("updateFPS"), self.updateStatusFPS)
+    self.connect(self, SIGNAL("updateFPS(double)"), self.updateStatusFPS)
 
   def updateStatusFPS(self, fps):
     """
@@ -186,13 +186,13 @@ class IRTGLWidget(QGLWidget):
 
     self.setFixedSize(640, 480)
     self.thread = IRTThread(self, 640, 480, mainWindow)
-    QObject.connect(self, SIGNAL("updateView"), self.updateGL)
+    QObject.connect(self, SIGNAL("updateView()"), self.updateGL)
     self.thread.start()
 
   def resizeGL(self, width, height):
     print "Resizing the scene (%d, %d)" % (width, height)
     self.setFixedSize(width, height)
-    self.thread.emit(SIGNAL("resize"), width, height)
+    self.thread.emit(SIGNAL("resize()"), width, height)
 
   def paintGL(self):
     GL.glRasterPos(-1,-1)
@@ -247,8 +247,8 @@ class IRTThread(QThread):
     self.pastFPS.append(t)
     if len(self.pastFPS) > 10:
       self.pastFPS = self.pastFPS[-10:]
-    self.mainWindow.emit(SIGNAL("updateFPS"), 10./sum(self.pastFPS))
-    self.glWidget.emit(SIGNAL("updateView"))
+    self.mainWindow.emit(SIGNAL("updateFPS(double)"), 10./sum(self.pastFPS))
+    self.glWidget.emit(SIGNAL("updateView()"))
 
   def run(self):
     while True:
