@@ -48,6 +48,7 @@ class IRTGLWidget(wx.glcanvas.GLCanvas):
     self.Bind(wx.EVT_SIZE, self.OnResize)
     self.thread = IRTThread(self, 640, 480, parent)
     self.thread.start()
+    self.context = wx.glcanvas.GLContext(self)
 
   def OnResize(self, event):
     width, height = event.Size
@@ -57,7 +58,7 @@ class IRTGLWidget(wx.glcanvas.GLCanvas):
 
   def OnPaint(self, event):
     dc = wx.PaintDC(self);
-    self.SetCurrent();
+    self.SetCurrent(self.context)
     GL.glRasterPos(-1,-1)
     try:
       self.thread.lock.acquire()
