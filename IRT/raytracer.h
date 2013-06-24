@@ -152,7 +152,7 @@ namespace IRT
   public:
     void draw(DataType* screen) const
     {
-      tbb::parallel_for( tbb::blocked_range2d<unsigned int>(0, pixelWidth, 0, pixelHeight), RaytracerOperator(this, sampler, screen, pixelWidth, scene->getBoundingBox(), origin, direction) );
+      tbb::parallel_for( tbb::blocked_range2d<unsigned int>(0, pixelWidth, 32, 0, pixelHeight, 32), RaytracerOperator(this, sampler, screen, pixelWidth, scene->getBoundingBox(), origin, direction) );
     }
 #else
     void draw(DataType* screen) const
