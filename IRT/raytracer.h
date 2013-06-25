@@ -94,6 +94,10 @@ namespace IRT
     unsigned int levels;
 
     Sampler sampler;
+#ifdef USE_TBB
+    tbb::task_scheduler_init init;
+#endif
+
   public:
     /**
    * Constructs a raytracer
