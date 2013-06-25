@@ -11,17 +11,21 @@ else:
   env.Tool('msvc')
 
 if env['profile']:
-  env.Append(CPPFLAGS='/EHsc /Ox /Zi -D_CRT_SECURE_NO_DEPRECATE /MD -DNDEBUG  -DWIN32')
-  env.Append(LINKFLAGS='/DEBUG /Profile')
+  env.Append(CPPDEFINES=['_CRT_SECURE_NO_DEPRECATE', 'NDEBUG', 'WIN32'])
+  env.Append(CPPFLAGS=['/EHsc', '/Ox', '/Zi', '/MD'])
+  env.Append(LINKFLAGS=['/DEBUG', '/Profile'])
 elif env['optimized']:
-  env.Append(CPPFLAGS='/EHsc /Ox /W2 /MD -D_CRT_SECURE_NO_DEPRECATE -DNDEBUG -DWIN32')
+  env.Append(CPPDEFINES=['_CRT_SECURE_NO_DEPRECATE', 'NDEBUG', 'WIN32'])
+  env.Append(CPPFLAGS=['/EHsc', '/Ox', '/W2', '/MD'])
 elif env['debug']:
-  env.Append(CPPFLAGS='/EHsc /GS /Wall /Zi /MDd -DWIN32 /analyze')
-  env.Append(LINKFLAGS='/DEBUG')
+  env.Append(CPPDEFINES=['DEBUG', 'WIN32'])
+  env.Append(CPPFLAGS=['/EHsc', '/GS', '/Wall', '/Zi', '/MDd'])
+  env.Append(LINKFLAGS=['/DEBUG'])
 
 env.Append(LIBPATH=os.environ['PATH'].split(';'))
 if 'INCLUDE' in os.environ:
   env.Append(CPPPATH=os.environ['INCLUDE'].split(';'))
+  env.Append(CPATH=os.environ['INCLUDE'].split(';'))
 
 env['boost'] = 'vc100'
 env['SWIG'] = r'c:\swig\swig.exe'

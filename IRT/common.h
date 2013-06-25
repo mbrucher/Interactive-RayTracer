@@ -20,7 +20,7 @@
 # define _export_tools
 #endif
 
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Dense>
 
 namespace IRT
 {

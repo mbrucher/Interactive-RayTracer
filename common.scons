@@ -24,7 +24,7 @@ def SWIGSharedLibrary(env, library, sources, **args):
   if "LIBS" not in args:
     args["LIBS"] = []
 
-  args["LIBS"].append("${SHLIBPREFIX}python%i.%i${SHLIBSUFFIX}" % (sys.version_info.major, sys.version_info.minor))
+  args["LIBS"].append("python%i%i" % (sys.version_info.major, sys.version_info.minor))
 
   if 'SWIGFLAGS' in args:
     args['SWIGFLAGS'] += ['-python']
@@ -45,7 +45,7 @@ if env['optimized']:
     env.Append(CFLAGS='-DNDEBUG')
     env.Append(CPPDEFINES=['NDEBUG', ])
 
-def AddProgram(env, name, sources, CFLAGS=[], CCFLAGS=[], CXXFLAGS=[], CPPDEFINES=[], CPATH=[], LIBPATH=[], LIBS=[], **kwargs):
+def AddProgram(env, name, sources, CFLAGS=[], CCFLAGS=[], CXXFLAGS=[], CPPDEFINES=[], CPATH=[], CPPPATH=[], LIBPATH=[], **kwargs):
   return env.Program(name, sources,
     CFLAGS = CFLAGS + env['CFLAGS'],
     CCFLAGS = CCFLAGS + env['CCFLAGS'],
@@ -59,7 +59,7 @@ def AddProgram(env, name, sources, CFLAGS=[], CCFLAGS=[], CXXFLAGS=[], CPPDEFINE
 
 env['BUILDERS']['AddProgram'] = AddProgram
 
-def AddSharedLibrary(env, name, sources, CFLAGS=[], CCFLAGS=[], CXXFLAGS=[], CPPDEFINES=[], CPATH=[], LIBPATH=[], LIBS=[], **kwargs):
+def AddSharedLibrary(env, name, sources, CFLAGS=[], CCFLAGS=[], CXXFLAGS=[], CPPDEFINES=[], CPATH=[], CPPPATH=[], LIBPATH=[], **kwargs):
   return env.SharedLibrary(name, sources,
     CFLAGS = CFLAGS + env['CFLAGS'],
     CCFLAGS = CCFLAGS + env['CCFLAGS'],
@@ -73,7 +73,7 @@ def AddSharedLibrary(env, name, sources, CFLAGS=[], CCFLAGS=[], CXXFLAGS=[], CPP
 
 env['BUILDERS']['AddSharedLibrary'] = AddSharedLibrary
 
-def AddStaticLibrary(env, name, sources, CFLAGS=[], CCFLAGS=[], CXXFLAGS=[], CPPDEFINES=[], CPATH=[], LIBPATH=[], LIBS=[], **kwargs):
+def AddStaticLibrary(env, name, sources, CFLAGS=[], CCFLAGS=[], CXXFLAGS=[], CPPDEFINES=[], CPATH=[], CPPPATH=[], LIBPATH=[], **kwargs):
   return env.StaticLibrary(name, sources,
     CFLAGS = CFLAGS + env['CFLAGS'],
     CCFLAGS = CCFLAGS + env['CCFLAGS'],
