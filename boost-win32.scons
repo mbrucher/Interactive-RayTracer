@@ -5,7 +5,7 @@ import glob
 Import('env')
 
 env['boost_suffix'] = ''
-for libpath in os.environ['PATH'].split(';'):
+for libpath in os.environ['PATH'].split(';') + [env['boostdir'] + os.sep + "lib"]:
   l = list(glob.glob(libpath + '\\boost_thread-%s*-mt*.dll' % env['boost']))
   if len(l) > 0:
     env['boost_suffix'] = l[0][len(libpath) + 13:-4]
