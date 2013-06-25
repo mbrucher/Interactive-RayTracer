@@ -184,8 +184,8 @@ class IRTGLWidget(QGLWidget):
     #super(QGLWidget, self).__init__(parent)
     QGLWidget.__init__(self, parent)
 
-    self.setFixedSize(640, 480)
-    self.thread = IRTThread(self, 640, 480, mainWindow)
+    self.setFixedSize(800, 600)
+    self.thread = IRTThread(self, 800, 600, mainWindow)
     QObject.connect(self, SIGNAL("updateView()"), self.updateGL)
     self.thread.start()
 
