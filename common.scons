@@ -3,7 +3,8 @@ import os
 import sys
 import re
 
-Import('env')
+env = SConscript('python-%s.scons' % sys.platform)
+
 
 def SWIGSharedLibrary(env, library, sources, **args):
   swigre = re.compile('(.*).i')
@@ -24,7 +25,7 @@ def SWIGSharedLibrary(env, library, sources, **args):
   if "LIBS" not in args:
     args["LIBS"] = []
 
-  args["LIBS"].append("python%i%i" % (sys.version_info.major, sys.version_info.minor))
+  args["LIBS"].append(env['PythonLib'])
 
   if 'SWIGFLAGS' in args:
     args['SWIGFLAGS'] += ['-python']

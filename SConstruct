@@ -44,7 +44,7 @@ elif sys.platform == "linux2":
 elif sys.platform == "darwin":
   env = SConscript('gcc-darwin.scons')
 
-if env["swigdir"] != "":
+if sys.platform == "win32" and env["swigdir"] != "":
   env['SWIG'] = env["swigdir"] + "/swig.exe"
 
 if env['parallel'] == True:
@@ -64,12 +64,6 @@ if sys.platform == "win32":
   env.Append(CPPPATH=os.environ["INCLUDE"].split(";"))
 else:
   env.Append(CPPPATH=os.environ["INCLUDE"].split(":"))
-if sys.platform == "win32":
-  env.Append(LIBPATH=[distutils.sysconfig.get_python_lib(standard_lib=True) + os.sep + '..' + os.sep + "libs", '.', ])
-elif sys.platform == "darwin":
-  env.Append(LIBPATH=[distutils.sysconfig.get_python_lib(standard_lib=True) + os.sep + 'config', '.', ])
-else:
-  env.Append(LIBPATH=[distutils.sysconfig.get_python_lib(standard_lib=True), '.', ])
 
 if env['cflags']:
   env.Append(CCFLAGS=env['cflags'])
