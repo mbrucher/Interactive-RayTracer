@@ -30,11 +30,11 @@ class Sample(object):
     Box.setReflection(.25)
 #    self.scene.addPrimitive(Box)
 
-    light = IRT.Light(numpy.array((-5., 2., 0.), dtype=numpy.float32), numpy.array((.0, .2, .2), dtype=numpy.float32))
+    light = IRT.Light(1e6 * numpy.array((-2., 2., 1.), dtype=numpy.float32), 49 * 1e12 * numpy.array((.0, .2, .2), dtype=numpy.float32))
     self.scene.addLight(light)
-    light = IRT.Light(numpy.array((5., -2., 0.), dtype=numpy.float32), numpy.array((.2, .0, .2), dtype=numpy.float32))
+    light = IRT.Light(1e6 * numpy.array((2., -2., 1.), dtype=numpy.float32), 49 * 1e12 * numpy.array((.2, .0, .2), dtype=numpy.float32))
     self.scene.addLight(light)
-    light = IRT.Light(numpy.array((0., -5., 2.), dtype=numpy.float32), numpy.array((.4, .4, .4), dtype=numpy.float32))
+    light = IRT.Light(1e6 * numpy.array((0., 0., -9.), dtype=numpy.float32), 49 * 1e12 * numpy.array((.4, .4, .4), dtype=numpy.float32))
     self.scene.addLight(light)
 
     IRT.BuildKDTree.automatic_build(self.scene)
@@ -55,7 +55,7 @@ class Sample(object):
     self.orientation = numpy.array((.0, .1, .0), dtype=numpy.float32)
     self.raytracer.setOrientation(self.orientation)
 
-    self.raytracer.setOversampling(8)
-    #self.raytracer.setLevels(0)
+    self.raytracer.setOversampling(2)
+    self.raytracer.setLevels(3)
 
     self.raytracer.setScene(self.scene)

@@ -14,7 +14,7 @@ namespace IRT
 
   Color Light::computeColor(const Ray& ray, float dist) const
   {
-    return color;// * (1 / (dist * dist));
+    return color * (1 / (dist * dist));
   }
 
   const Vector3df& Light::getCenter() const

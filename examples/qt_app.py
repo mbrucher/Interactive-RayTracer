@@ -236,9 +236,9 @@ class IRTThread(QThread):
   screen = property(get_screen)
 
   def paint(self):
-    t = time.clock()
+    t = time.time()
     self.sample(self.screens[self.currentScreen])
-    t = time.clock() - t
+    t = time.time() - t
     try:
       self.lock.lockForWrite()
       self.currentScreen = 1 if self.currentScreen == 0 else 0
