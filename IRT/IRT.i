@@ -9,7 +9,8 @@
 %include "numpy.i"
 %fragment("NumPy_Fragments");
 %{
-const int DataTypeKind = NPY_FLOAT;
+  const int DataTypeKind = NPY_FLOAT;
+  const int CheckTypeKind = NPY_LONG;
 %}
 %init %{
 import_array();

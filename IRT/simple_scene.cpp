@@ -74,10 +74,15 @@ namespace IRT
     lights.erase(it);
     return light;
   }
-
+  
   Primitive* SimpleScene::getFirstCollision(const Ray& ray, float& dist, float tnear, float tfar)
   {
     return tree.getFirstCollision(ray, dist, tnear, tfar);
+  }
+  
+  long SimpleScene::getHitLevel(const Ray& ray, float tnear, float tfar)
+  {
+    return tree.getHitLevel(ray, tnear, tfar);
   }
 
   const Color SimpleScene::computeColor(const Point3df& center, const MaterialPoint& caracteristics, const Primitive* primitive)

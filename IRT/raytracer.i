@@ -25,6 +25,19 @@
   $1 = ($1_ltype) array->data;
 }
 
+%typecheck(SWIG_TYPECHECK_DOUBLE_ARRAY)
+(long* INPLACE_ARRAY)
+{
+  $1 = is_array($input) && PyArray_EquivTypenums(array_type($input), CheckTypeKind);
+}
+%typemap(in)
+(long* INPLACE_ARRAY)
+(PyArrayObject* array=NULL)
+{
+  array = obj_to_array_no_conversion($input, CheckTypeKind);
+  $1 = ($1_ltype) array->data;
+}
+
 namespace IRT
 {
   template<class Sampler>
@@ -35,6 +48,7 @@ namespace IRT
     ~Raytracer();
 
     void draw(IRT::DataType* INPLACE_ARRAY);
+    void checkDraw(long* INPLACE_ARRAY, long type);
     void setResolution(unsigned long pixelWidth, unsigned long pixelHeight);
     std::pair<unsigned long, unsigned long> getResolution();
     void setScene(IRT::SimpleScene* scene);
