@@ -155,6 +155,16 @@ namespace IRT
       Vector3df pb;
       int previous;
     };
+    
+    /// Stack for stats
+    struct KDStackStats
+    {
+      const KDTreeNode* node;
+      DataType t;
+      Vector3df pb;
+      int previous;
+      long level;
+    };
 
   private:
     /// The primitives that the kd-tree will browse
@@ -225,17 +235,80 @@ namespace IRT
         }
       }
     }
+    
+    struct DefaultTraversal
+    {
+      typedef Primitive* Return;
+      typedef KDStack Stack;
+      Primitive* returnFrom(Primitive* primitive)
+      {
+        return primitive;
+      }
+      Primitive* defaultReturn()
+      {
+        return NULL;
+      }
 
+      void update()
+      {
+      }
+      
+      void updateFrom(const Stack& stack)
+      {
+      }
+
+      void updateTo(Stack& stack) const
+      {
+      }
+    };
+    
+    struct HitLevelTraversal
+    {
+      typedef long Return;
+      typedef KDStackStats Stack;
+      HitLevelTraversal()
+      :level(0)
+      {
+        
+      }
+      
+      long returnFrom(Primitive* primitive)
+      {
+        return level;
+      }
+      long level;
+      long defaultReturn()
+      {
+        return 1;
+      }
+      
+      void update()
+      {
+        ++level;
+      }
+      
+      void updateFrom(const Stack& stack)
+      {
+        level = stack.level;
+      }
+
+      void updateTo(Stack& stack) const
+      {
+        stack.level = level;
+      }
+    };
+    
     /**
      * Returns the first collision from a vector of Primitives
-     * @param primitives is a vector of Primitives to test
      * @param ray is the ray to test
      * @param dist is the distance to the primitive
      * @return the index of the hit primitive, else -1
      */
-    Primitive* getFirstCollision(const Ray& ray, float& dist, float tnear, float tfar) const
+    template<class TraversalStructure>
+    typename TraversalStructure::Return getFirstCollision(const Ray& ray, float& dist, float tnear, float tfar) const
     {
-      KDStack stack[50];
+      TraversalStructure traversal;
+      typename TraversalStructure::Stack stack[50];
 
       const KDTreeNode* current_node = &nodes[0];
       int entrypoint = 0;
@@ -253,43 +326,49 @@ namespace IRT
       stack[exitpoint].t = tfar;
       stack[exitpoint].pb = ray.origin() + ray.direction() * tfar;
       stack[exitpoint].node = NULL;
+      traversal.updateTo(stack[entrypoint]);
 
       while (current_node != NULL)
       {
         while(!current_node->isLeaf())
         {
-          current_node = split_node(ray, current_node, entrypoint, exitpoint, stack);
+          current_node = splitNode<TraversalStructure>(ray, current_node, entrypoint, exitpoint, stack, traversal);
         }
 
         Primitive* primitive = current_node->getFirstCollision(ray, dist);
         if(primitive != NULL)
         {
-          return primitive;
+          return traversal.returnFrom(primitive);
         }
         entrypoint = exitpoint;
         current_node = stack[exitpoint].node;
+        traversal.updateFrom(stack[exitpoint]);
         exitpoint = stack[entrypoint].previous;
       }
 
-      return NULL;
+      return traversal.defaultReturn();
     }
-
-    const KDTreeNode* split_node(const Ray& ray, const KDTreeNode* current_node, int& entrypoint, int& exitpoint, KDStack* stack) const
+    
+    template<class TraversalStructure>
+    const KDTreeNode* splitNode(const Ray& ray, const KDTreeNode* current_node, int& entrypoint, int& exitpoint, typename TraversalStructure::Stack* stack, TraversalStructure& traversal) const
     {
       const KDTreeNode* far_node;
-
+      
       int axis = current_node->getAxis();
       DataType splitpos = current_node->getSplitPosition();
       if (stack[entrypoint].pb(axis) <= splitpos)
       {
         if (stack[exitpoint].pb(axis) <= splitpos)
         {
+          traversal.update();
           return current_node->leftNode();
         }
         if (stack[exitpoint].pb(axis) == splitpos)
         {
+          traversal.update();
           return current_node->rightNode();
         }
+        traversal.update();
         far_node = current_node->rightNode();
         current_node = current_node->leftNode();
       }
@@ -297,8 +376,10 @@ namespace IRT
       {
         if (stack[exitpoint].pb(axis) > splitpos)
         {
+          traversal.update();
           return current_node->rightNode();
         }
+        traversal.update();
         far_node = current_node->leftNode();
         current_node = current_node->rightNode();
       }
@@ -312,11 +393,12 @@ namespace IRT
       stack[exitpoint].t = t;
       stack[exitpoint].node = far_node;
       stack[exitpoint].pb(axis) = splitpos;
+      traversal.updateTo(stack[exitpoint]);
       int nextaxis = mod[axis + 1];
       int prevaxis = mod[axis + 2];
       stack[exitpoint].pb(nextaxis) = ray.origin()(nextaxis) + t * ray.direction()(nextaxis);
       stack[exitpoint].pb(prevaxis) = ray.origin()(prevaxis) + t * ray.direction()(prevaxis);
-
+      
       return current_node;
     }
   };

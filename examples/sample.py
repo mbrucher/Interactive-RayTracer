@@ -41,7 +41,10 @@ class Sample(object):
 
   def __call__(self, screen):
     self.raytracer.draw(screen)
-
+  
+  def hitLevel(self, screen):
+    self.raytracer.checkDraw(screen, 0)
+  
   def setResolution(self, width, height):
     self.raytracer.setResolution(width, height)
 

@@ -89,6 +89,19 @@ namespace IRT
       orientation_u *= width / pixelWidth;
       orientation_v *= height / pixelHeight;
     }
+    
+    void hitLevel(const Ray& ray, long& level)
+    {
+      DataType tnear;
+      DataType tfar;
+      
+      if(!scene->getBoundingBox().getEntryExitDistances(ray, tnear, tfar))
+      {
+        return;
+      }
+      
+      level = scene->getHitLevel(ray, tnear, tfar);
+    }
 
     /// Maximum recursion level
     unsigned int levels;
@@ -188,6 +201,28 @@ namespace IRT
     }
 #endif
 
+    /**
+     * @brief checkDraw allows to display some information of how the raytracer works
+     * @param screen is the screen where everything will be drawn
+     * @param type is 0 to get kd-tree hit level
+     */
+    void checkDraw(long* screen, long type)
+    {
+      Ray ray(origin, direction);
+      const BoundingBox& bb = scene->getBoundingBox();
+      for(unsigned int j = 0; j < pixelHeight; ++j)
+      {
+        for(unsigned int i = 0; i < pixelWidth; ++i)
+        {
+          generateRay(i, j, ray);
+          if(mustShoot(ray, bb))
+          {
+            hitLevel(ray, screen[j * pixelWidth + i]);
+          }
+        }
+      }
+    }
+    
     /**
      * Sets the size of the screen
      * @param width is the width of the screen

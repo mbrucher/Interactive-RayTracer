@@ -74,10 +74,16 @@ namespace IRT
     lights.erase(it);
     return light;
   }
-
+  
   Primitive* SimpleScene::getFirstCollision(const Ray& ray, float& dist, float tnear, float tfar)
   {
-    return tree.getFirstCollision(ray, dist, tnear, tfar);
+    return tree.getFirstCollision<KDTree<Primitive>::DefaultTraversal>(ray, dist, tnear, tfar);
+  }
+  
+  long SimpleScene::getHitLevel(const Ray& ray, float tnear, float tfar)
+  {
+    float dist;
+    return tree.getFirstCollision<KDTree<Primitive>::HitLevelTraversal>(ray, dist, tnear, tfar);
   }
 
   const Color SimpleScene::computeColor(const Point3df& center, const MaterialPoint& caracteristics, const Primitive* primitive)
@@ -103,7 +109,7 @@ namespace IRT
 
   bool SimpleScene::testCollision(const Ray& ray, float dist)
   {
-    return (tree.getFirstCollision(ray, dist, 0, dist) != NULL);
+    return (tree.getFirstCollision<KDTree<Primitive>::DefaultTraversal>(ray, dist, 0, dist) != NULL);
   }
 
   unsigned long SimpleScene::addPrimitive(Primitive* primitive)

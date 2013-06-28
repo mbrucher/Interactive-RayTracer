@@ -85,6 +85,13 @@ namespace IRT
      * @return the index of the hit primitive, else -1
      */
     _export_tools Primitive* getFirstCollision(const Ray& ray, float& dist, float tfar, float tnear);
+    
+    /**
+     * Returns the hit level in the tree
+     * @param ray is the ray to test
+     * @return the hit level
+     */
+    _export_tools long getHitLevel(const Ray& ray, float tfar, float tnear);
 
     /**
      * Computes the color
