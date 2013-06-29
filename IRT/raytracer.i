@@ -5,6 +5,7 @@
 %{
 #include "IRT/raytracer.h"
 
+#include "IRT/samplers/halton_sampler.h"
 #include "IRT/samplers/jittered_sampler.h"
 #include "IRT/samplers/multi_jittered_sampler.h"
 #include "IRT/samplers/nrooks_sampler.h"
@@ -60,6 +61,7 @@ namespace IRT
   };
 }
 
+%template(Raytracer_Halton_2_3) IRT::Raytracer<IRT::HaltonSampler<float, 2, 3> >;
 %template(Raytracer_Jittered) IRT::Raytracer<IRT::JitteredSampler<float> >;
 %template(Raytracer_MultiJittered) IRT::Raytracer<IRT::MultiJitteredSampler<float> >;
 %template(Raytracer_NRooks) IRT::Raytracer<IRT::NRooksSampler<float> >;

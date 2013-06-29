@@ -210,7 +210,7 @@ class IRTThread(QThread):
     self.glWidget = parent
 
     self.sample = Sample(width, height)
-    self.sample.setRaytracer(IRT.Raytracer_Uniform)
+    self.sample.setRaytracer(IRT.Raytracer_Halton_2_3)
 
     self.screens = [numpy.zeros((3, width, height), dtype = numpy.float32),numpy.zeros((3, width, height), dtype = numpy.float32)]
     self.lock = QReadWriteLock()
