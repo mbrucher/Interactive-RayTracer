@@ -88,13 +88,19 @@ namespace IRT
     Sphere(IRT::Vector3df& ray, float dist);
     ~Sphere();
   };
-
   
   class Box: public Primitive
   {
   public:
     Box(IRT::Vector3df& corner1, IRT::Vector3df& corner2);
     ~Box();
+  };
+  
+  class Triangle: public Primitive
+  {
+  public:
+    Triangle(IRT::Vector3df& corner1, IRT::Vector3df& corner2, IRT::Vector3df& corner3);
+    ~Triangle();
   };
 }
 

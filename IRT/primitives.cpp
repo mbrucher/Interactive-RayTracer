@@ -88,37 +88,37 @@ namespace IRT
 
     return bb;
   }
-
+  
   Box::Box(const Point3df& corner1, const Point3df& corner2) :
-    corner1(corner1), corner2(corner2)
+  corner1(corner1), corner2(corner2)
   {
   }
-
+  
   Box::~Box()
   {
   }
-
+  
   bool Box::intersect(const Ray& ray, float& dist) const
   {
     DataType tnear, tfar;
     BoundingBox bb;
     bb.corner1 = corner1;
     bb.corner2 = corner2;
-
+    
     bool result = bb.getEntryExitDistances(ray, tnear, tfar);
-
+    
     if(result)
     {
       dist = tnear;
     }
-
+    
     return result;
   }
-
+  
   void Box::computeColorNormal(const Ray& ray, float dist, MaterialPoint& caracteristics) const
   {
     Vector3df collide(ray.origin() + dist * ray.direction());
-
+    
     caracteristics.normal = Normal3df::Zero();
     for(int i = 0; i < 3; ++i)
     {
@@ -132,14 +132,68 @@ namespace IRT
       }
     }
   }
-
+  
   BoundingBox Box::getBoundingBox() const
   {
     BoundingBox bb;
-
+    
     bb.corner1 = corner1;
     bb.corner2 = corner2;
-
+    
+    return bb;
+  }
+  
+  Triangle::Triangle(const Point3df& corner1, const Point3df& corner2, const Point3df& corner3) :
+  corner1(corner1), corner2(corner2), corner3(corner3)
+  {
+  }
+  
+  Triangle::~Triangle()
+  {
+  }
+  
+  bool Triangle::intersect(const Ray& ray, float& dist) const
+  {
+    DataType tnear, tfar;
+    BoundingBox bb;
+    bb.corner1 = corner1;
+    bb.corner2 = corner2;
+    
+    bool result = bb.getEntryExitDistances(ray, tnear, tfar);
+    
+    if(result)
+    {
+      dist = tnear;
+    }
+    
+    return result;
+  }
+  
+  void Triangle::computeColorNormal(const Ray& ray, float dist, MaterialPoint& caracteristics) const
+  {
+    Vector3df collide(ray.origin() + dist * ray.direction());
+    
+    caracteristics.normal = Normal3df::Zero();
+    for(int i = 0; i < 3; ++i)
+    {
+      if(std::abs(collide(i) - corner1(i)) <= std::numeric_limits<DataType>::epsilon())
+      {
+        caracteristics.normal(i) = -1;
+      }
+      if(std::abs(collide(i) - corner2(i)) <= std::numeric_limits<DataType>::epsilon())
+      {
+        caracteristics.normal(i) = 1;
+      }
+    }
+  }
+  
+  BoundingBox Triangle::getBoundingBox() const
+  {
+    BoundingBox bb;
+    
+    bb.corner1 = corner1;
+    bb.corner2 = corner2;
+    
     return bb;
   }
 }
