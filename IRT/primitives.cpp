@@ -154,45 +154,48 @@ namespace IRT
   
   bool Triangle::intersect(const Ray& ray, float& dist) const
   {
-    DataType tnear, tfar;
-    BoundingBox bb;
-    bb.corner1 = corner1;
-    bb.corner2 = corner2;
+    Vector3df normal = (corner2 - corner1).cross(corner3 - corner1);
+    float d = corner1.dot(normal);
     
-    bool result = bb.getEntryExitDistances(ray, tnear, tfar);
+    float coeff = ray.direction().dot(normal);
+    if(std::abs(coeff) < std::numeric_limits<float>::epsilon())
+      return false;
     
-    if(result)
-    {
-      dist = tnear;
-    }
+    Vector3df intersect = ray.origin() + ray.direction() * (ray.origin().dot(normal) - d) / coeff;
+
+    Vector3df v0 = corner3 - corner1;
+    Vector3df v1 = corner2 - corner1;
+    Vector3df v2 = intersect - corner1;
     
-    return result;
+    // Compute dot products
+    float dot00 = v0.dot(v0);
+    float dot01 = v0.dot(v1);
+    float dot02 = v0.dot(v2);
+    float dot11 = v1.dot(v1);
+    float dot12 = v1.dot(v2);
+    
+    // Compute barycentric coordinates
+    float invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+    float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+    float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+    
+    // Check if point is in triangle
+    return (u >= 0) && (v >= 0) && (u + v < 1);
   }
   
   void Triangle::computeColorNormal(const Ray& ray, float dist, MaterialPoint& caracteristics) const
   {
-    Vector3df collide(ray.origin() + dist * ray.direction());
+    caracteristics.normal = (corner2 - corner1).cross(corner3 - corner1);
     
-    caracteristics.normal = Normal3df::Zero();
-    for(int i = 0; i < 3; ++i)
-    {
-      if(std::abs(collide(i) - corner1(i)) <= std::numeric_limits<DataType>::epsilon())
-      {
-        caracteristics.normal(i) = -1;
-      }
-      if(std::abs(collide(i) - corner2(i)) <= std::numeric_limits<DataType>::epsilon())
-      {
-        caracteristics.normal(i) = 1;
-      }
-    }
+    normalize(caracteristics.normal);
   }
   
   BoundingBox Triangle::getBoundingBox() const
   {
     BoundingBox bb;
     
-    bb.corner1 = corner1;
-    bb.corner2 = corner2;
+    bb.corner1 = corner1.array().min(corner2.array()).min(corner3.array());
+    bb.corner2 = corner1.array().max(corner2.array()).max(corner3.array());
     
     return bb;
   }
