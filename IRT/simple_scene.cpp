@@ -3,7 +3,6 @@
  * Implementation of the simple scene
  */
 
-#include <iostream>
 #include <stdexcept>
 
 #include "simple_scene.h"

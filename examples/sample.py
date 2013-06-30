@@ -25,10 +25,16 @@ class Sample(object):
     sphere.setDiffuse(1.)
     self.scene.addPrimitive(sphere)
 
-    Box = IRT.Box(numpy.array((-8., 4., 26.), dtype=numpy.float32), numpy.array((8., 10., 1000.), dtype=numpy.float32))
-    Box.setColor(numpy.array((.95, .95, .95), dtype=numpy.float32))
-    Box.setReflection(.25)
-#    self.scene.addPrimitive(Box)
+    box = IRT.Box(numpy.array((-8., 4., 26.), dtype=numpy.float32), numpy.array((8., 10., 1000.), dtype=numpy.float32))
+    box.setColor(numpy.array((.95, .95, .95), dtype=numpy.float32))
+    box.setReflection(.25)
+    #self.scene.addPrimitive(box)
+    
+    triangle = IRT.Triangle(numpy.array((-12., 0., 30.), dtype=numpy.float32), numpy.array((12., 12., 28.), dtype=numpy.float32), numpy.array((0., -12., 28.), dtype=numpy.float32))
+    triangle.setColor(numpy.array((1., 1., 1.), dtype=numpy.float32))
+    triangle.setReflection(.1)
+    triangle.setDiffuse(.4)
+    self.scene.addPrimitive(triangle)
 
     light = IRT.Light(1e6 * numpy.array((-2., 2., 1.), dtype=numpy.float32), 49 * 1e12 * numpy.array((.0, .2, .2), dtype=numpy.float32))
     self.scene.addLight(light)

@@ -124,7 +124,7 @@ namespace IRT
     /// Radius of the sphere
     DataType radius;
   };
-
+  
   /// A simple Box
   class Box: public Primitive
   {
@@ -135,10 +135,10 @@ namespace IRT
      * @param corner2 is the right up front corner
      */
     _export_tools Box(const Point3df& corner1, const Point3df& corner2);
-
+    
     /// Destructor
     _export_tools ~Box();
-
+    
     /**
      * Tests if a ray intersects the sphere
      * @param ray is the ray to test
@@ -146,7 +146,7 @@ namespace IRT
      * @return True or False depending on the result of the test
      */
     _export_tools bool intersect(const Ray& ray, DataType& dist) const;
-
+    
     /**
      * Computes the normal and the color of the point based on the intersection point with the primitive
      * @param ray is the direction ray
@@ -154,7 +154,7 @@ namespace IRT
      * @param caracteristics is a the caracteristics of the primitive at this point
      */
     _export_tools void computeColorNormal(const Ray& ray, DataType dist, MaterialPoint& caracteristics) const;
-
+    
     /**
      * Returns the bounding box of the primitive
      * @return the bounding box
@@ -165,6 +165,51 @@ namespace IRT
     Point3df corner1;
     /// Second corner
     Point3df corner2;
+  };
+  
+  /// A simple triangle
+  class Triangle: public Primitive
+  {
+  public:
+    /**
+     * Construct a new Triangle
+     * @param corner1
+     * @param corner2
+     * @param corner3
+     */
+    _export_tools Triangle(const Point3df& corner1, const Point3df& corner2, const Point3df& corner3);
+    
+    /// Destructor
+    _export_tools ~Triangle();
+    
+    /**
+     * Tests if a ray intersects the triangle
+     * @param ray is the ray to test
+     * @param dist is an output argument that will contain the distance between the ray origin and the primitive
+     * @return True or False depending on the result of the test
+     */
+    _export_tools bool intersect(const Ray& ray, DataType& dist) const;
+    
+    /**
+     * Computes the normal and the color of the point based on the intersection point with the primitive
+     * @param ray is the direction ray
+     * @param dist is the distance to the primitive
+     * @param caracteristics is a the caracteristics of the primitive at this point
+     */
+    _export_tools void computeColorNormal(const Ray& ray, DataType dist, MaterialPoint& caracteristics) const;
+    
+    /**
+     * Returns the bounding box of the primitive
+     * @return the bounding box
+     */
+    _export_tools virtual BoundingBox getBoundingBox() const;
+  private:
+    /// First corner
+    Point3df corner1;
+    /// Second corner
+    Point3df corner2;
+    /// Third corner
+    Point3df corner3;
   };
 }
 

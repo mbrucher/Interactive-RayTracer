@@ -88,37 +88,37 @@ namespace IRT
 
     return bb;
   }
-
+  
   Box::Box(const Point3df& corner1, const Point3df& corner2) :
-    corner1(corner1), corner2(corner2)
+  corner1(corner1), corner2(corner2)
   {
   }
-
+  
   Box::~Box()
   {
   }
-
+  
   bool Box::intersect(const Ray& ray, float& dist) const
   {
     DataType tnear, tfar;
     BoundingBox bb;
     bb.corner1 = corner1;
     bb.corner2 = corner2;
-
+    
     bool result = bb.getEntryExitDistances(ray, tnear, tfar);
-
+    
     if(result)
     {
       dist = tnear;
     }
-
+    
     return result;
   }
-
+  
   void Box::computeColorNormal(const Ray& ray, float dist, MaterialPoint& caracteristics) const
   {
     Vector3df collide(ray.origin() + dist * ray.direction());
-
+    
     caracteristics.normal = Normal3df::Zero();
     for(int i = 0; i < 3; ++i)
     {
@@ -132,14 +132,78 @@ namespace IRT
       }
     }
   }
-
+  
   BoundingBox Box::getBoundingBox() const
   {
     BoundingBox bb;
-
+    
     bb.corner1 = corner1;
     bb.corner2 = corner2;
+    
+    return bb;
+  }
+  
+  Triangle::Triangle(const Point3df& corner1, const Point3df& corner2, const Point3df& corner3) :
+  corner1(corner1), corner2(corner2), corner3(corner3)
+  {
+  }
+  
+  Triangle::~Triangle()
+  {
+  }
+  
+  bool Triangle::intersect(const Ray& ray, float& dist) const
+  {
+    Vector3df v0 = corner3 - corner1;
+    Vector3df v1 = corner2 - corner1;
 
+    Vector3df normal = v1.cross(v0);
+    float d = corner1.dot(normal);
+    
+    float coeff = ray.direction().dot(normal);
+    if(std::abs(coeff) < std::numeric_limits<float>::epsilon())
+      return false;
+  
+    dist = - (ray.origin().dot(normal) - d) / coeff;
+    
+    Vector3df intersect = ray.origin() + ray.direction() * dist;
+
+    Vector3df v2 = intersect - corner1;
+    
+    // Compute dot products
+    float dot00 = v0.dot(v0);
+    float dot01 = v0.dot(v1);
+    float dot02 = v0.dot(v2);
+    float dot11 = v1.dot(v1);
+    float dot12 = v1.dot(v2);
+    
+    // Compute barycentric coordinates
+    float invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+    float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+    float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+    
+    // Check if point is in triangle
+    return (u >= 0) && (v >= 0) && (u + v < 1);
+  }
+  
+  void Triangle::computeColorNormal(const Ray& ray, float dist, MaterialPoint& caracteristics) const
+  {
+    caracteristics.normal = (corner2 - corner1).cross(corner3 - corner1);
+    
+    normalize(caracteristics.normal);
+    if(ray.direction().dot(caracteristics.normal) > 0)
+    {
+      caracteristics.normal = - caracteristics.normal;
+    }
+  }
+  
+  BoundingBox Triangle::getBoundingBox() const
+  {
+    BoundingBox bb;
+    
+    bb.corner1 = corner1.array().min(corner2.array()).min(corner3.array());
+    bb.corner2 = corner1.array().max(corner2.array()).max(corner3.array());
+    
     return bb;
   }
 }
