@@ -154,17 +154,20 @@ namespace IRT
   
   bool Triangle::intersect(const Ray& ray, float& dist) const
   {
-    Vector3df normal = (corner2 - corner1).cross(corner3 - corner1);
+    Vector3df v0 = corner3 - corner1;
+    Vector3df v1 = corner2 - corner1;
+
+    Vector3df normal = v1.cross(v0);
     float d = corner1.dot(normal);
     
     float coeff = ray.direction().dot(normal);
     if(std::abs(coeff) < std::numeric_limits<float>::epsilon())
       return false;
+  
+    dist = - (ray.origin().dot(normal) - d) / coeff;
     
-    Vector3df intersect = ray.origin() + ray.direction() * (ray.origin().dot(normal) - d) / coeff;
+    Vector3df intersect = ray.origin() + ray.direction() * dist;
 
-    Vector3df v0 = corner3 - corner1;
-    Vector3df v1 = corner2 - corner1;
     Vector3df v2 = intersect - corner1;
     
     // Compute dot products
@@ -188,6 +191,10 @@ namespace IRT
     caracteristics.normal = (corner2 - corner1).cross(corner3 - corner1);
     
     normalize(caracteristics.normal);
+    if(ray.direction().dot(caracteristics.normal) > 0)
+    {
+      caracteristics.normal = - caracteristics.normal;
+    }
   }
   
   BoundingBox Triangle::getBoundingBox() const
