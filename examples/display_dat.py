@@ -45,15 +45,15 @@ class ParserDat(object):
     while len(elements) > 0:
       if elements[0] == 'CENTER':
         light['CENTER'] = numpy.array((elements[1], elements[2], elements[3]), dtype=numpy.float32)
-        elements = elements[4:]
+        del elements[0:4]
       elif elements[0] == 'COLOR':
         light['COLOR'] = numpy.array((elements[1], elements[2], elements[3]), dtype=numpy.float32)
-        elements = elements[4:]
+        del elements[0:4]
       elif elements[0] == 'RAD':
         light['RAD'] = float(elements[1])
-        elements = elements[2:]
+        del elements[0:2]
       else:
-        elements = elements[1:]
+        break
     self.lights.append(light)
 
   def parse_sphere(self, elements):
@@ -61,12 +61,12 @@ class ParserDat(object):
     while len(elements) > 0:
       if elements[0] == 'CENTER':
         sphere['CENTER'] = numpy.array((elements[1], elements[2], elements[3]), dtype=numpy.float32)
-        elements = elements[4:]
+        del elements[0:4]
       elif elements[0] == 'RAD':
         sphere['RAD'] = float(elements[1])
-        elements = elements[2:]
+        del elements[0:2]
       else:
-        elements = elements[1:]
+        break
     self.objects.append(sphere)
 
   def handle_sphere(self, elements):
@@ -88,32 +88,33 @@ class ParserDat(object):
   
   def parse_for_texture(self, texture, elements):
     while len(elements) > 0:
-      if elements[0] == 'END_SCENE':
-        return
-      elif elements[0] == 'COLOR':
+      if elements[0] == 'COLOR':
         texture['COLOR'] = numpy.array((elements[1], elements[2], elements[3]), dtype=numpy.float32)
-        elements = elements[4:]
+        del elements[0:4]
       elif elements[0] == 'AMBIENT':
         texture['AMBIENT'] = float(elements[1])
-        elements = elements[2:]
+        del elements[0:2]
       elif elements[0] == 'DIFFUSE':
         texture['DIFFUSE'] = float(elements[1])
-        elements = elements[2:]
+        del elements[0:2]
       elif elements[0] == 'SPECULAR':
         texture['SPECULAR'] = float(elements[1])
-        elements = elements[2:]
+        del elements[0:2]
       elif elements[0] == 'OPACITY':
         texture['OPACITY'] = float(elements[1])
-        elements = elements[2:]
+        del elements[0:2]
       elif elements[0] == 'TEXFUNC':
         texture['TEXFUNC'] = float(elements[1])
-        elements = elements[2:]
+        del elements[0:2]
+      elif elements[0] == 'PHONG':
+        texture['PHONG'] = elements[1:5]
+        del elements[0:5]
       else:
         return
 
   def handle_texture(self, elements):
     if elements[0] == 'TEXDEF':
-      self.handle_texture(elements[1:])
+      self.parse_texture(elements[1:])
     else:
       self.parse_for_texture(self.textures[self.current_texture], elements)
       if len(elements) > 0:
@@ -155,7 +156,7 @@ class ParserDat(object):
 
   def populate_lights(self, scene):
     for object in self.lights:
-      light = IRT.Light(object['CENTER'], 2e1 * object['COLOR'])
+      light = IRT.Light(object['CENTER'], object['COLOR'])
       scene.addLight(light)
 
   def populate_objects(self, scene):
