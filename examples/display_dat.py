@@ -195,7 +195,7 @@ class ParserDat(object):
 
   def populate_lights(self, scene):
     for object in self.lights:
-      light = IRT.Light(object['CENTER'], object['COLOR'])
+      light = IRT.Light(object['CENTER'], 20 * object['COLOR'])
       scene.addLight(light)
 
   def populate_objects(self, scene):
@@ -230,7 +230,7 @@ class ParserDat(object):
   
   def create_image(self, raytracer):
     import time
-    screen = numpy.zeros((self.raytracer_params['RESOLUTION'][0], self.raytracer_params['RESOLUTION'][1], 3), dtype=numpy.float32)
+    screen = numpy.zeros((self.raytracer_params['RESOLUTION'][1], self.raytracer_params['RESOLUTION'][0], 3), dtype=numpy.float32)
     current = time.time()
     raytracer.draw(screen)
     print "Elapsed %f" % (time.time() - current)
@@ -238,7 +238,7 @@ class ParserDat(object):
   
   def create_hitlevel(self, raytracer):
     import time
-    screen = numpy.zeros((self.raytracer_params['RESOLUTION'][0], self.raytracer_params['RESOLUTION'][1]), dtype=numpy.long)
+    screen = numpy.zeros((self.raytracer_params['RESOLUTION'][1], self.raytracer_params['RESOLUTION'][0]), dtype=numpy.long)
     current = time.time()
     raytracer.checkDraw(screen, 0)
     print "Elapsed %f" % (time.time() - current)
