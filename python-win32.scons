@@ -1,5 +1,5 @@
 
-import distutils
+import distutils.sysconfig
 import os
 import sys
 

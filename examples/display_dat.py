@@ -18,6 +18,9 @@ class ParserDat(object):
     if elements[0] == "SPHERE":
       self.parse_sphere(elements[1:])
       self.state.append("SPHERE")
+    if elements[0] == "TRI":
+      self.parse_triangle(elements[1:])
+      self.state.append("TRI")
     if elements[0] == "TEXDEF":
       self.parse_texture(elements[1:])
       self.state.append("TEXDEF")
@@ -70,11 +73,35 @@ class ParserDat(object):
     self.objects.append(sphere)
 
   def handle_sphere(self, elements):
-    if elements[0] == 'END_SCENE':
-      return
-    elif elements[0] == 'SPHERE':
+    if elements[0] == 'SPHERE':
       self.parse_sphere(elements[1:])
-    elif len(elements) == 1:
+    elif len(elements) == 1 and elements[0] != "END_SCENE":
+      self.objects[-1]['TEXTURE'] = elements[0]
+    else:
+      self.state = self.state[:-1]
+      self.handle_line(elements)
+
+  def parse_triangle(self, elements):
+    triangle = {'type' : 'TRI'}
+    while len(elements) > 0:
+      if elements[0] == 'V0':
+        triangle['V0'] = numpy.array((elements[1], elements[2], elements[3]), dtype=numpy.float32)
+        del elements[0:4]
+      elif elements[0] == 'V1':
+        triangle['V1'] = numpy.array((elements[1], elements[2], elements[3]), dtype=numpy.float32)
+        del elements[0:4]
+      elif elements[0] == 'V2':
+        triangle['V2'] = numpy.array((elements[1], elements[2], elements[3]), dtype=numpy.float32)
+        del elements[0:4]
+      else:
+        break
+    print triangle
+    self.objects.append(triangle)
+
+  def handle_triangle(self, elements):
+    if elements[0] == 'TRI':
+      self.parse_triangle(elements[1:])
+    elif len(elements) == 1 and elements[0] != "END_SCENE":
       self.objects[-1]['TEXTURE'] = elements[0]
     else:
       self.state = self.state[:-1]
@@ -126,6 +153,7 @@ class ParserDat(object):
              "SCENE" : handle_scene,
              "CAMERA" : handle_camera,
              "SPHERE" : handle_sphere,
+             "TRI" : handle_triangle,
              "TEXDEF" : handle_texture,
            }
 
@@ -163,6 +191,12 @@ class ParserDat(object):
     for object in self.objects:
       if object['type'] == 'SPHERE':
         sphere = IRT.Sphere(object['CENTER'], object['RAD'])
+        sphere.setColor(self.textures[object['TEXTURE']]['COLOR'])
+        sphere.setReflection(self.textures[object['TEXTURE']]['SPECULAR'])
+        sphere.setDiffuse(self.textures[object['TEXTURE']]['DIFFUSE'])
+        scene.addPrimitive(sphere)
+      if object['type'] == 'TRI':
+        sphere = IRT.Triangle(object['V0'], object['V1'], object['V2'])
         sphere.setColor(self.textures[object['TEXTURE']]['COLOR'])
         sphere.setReflection(self.textures[object['TEXTURE']]['SPECULAR'])
         sphere.setDiffuse(self.textures[object['TEXTURE']]['DIFFUSE'])
