@@ -59,8 +59,7 @@ class ParserDat(object):
         break
     self.lights.append(light)
 
-  def parse_sphere(self, elements):
-    sphere = {'type' : 'SPHERE'}
+  def parse_for_sphere(self, sphere, elements):
     while len(elements) > 0:
       if elements[0] == 'CENTER':
         sphere['CENTER'] = numpy.array((elements[1], elements[2], elements[3]), dtype=numpy.float32)
@@ -68,21 +67,27 @@ class ParserDat(object):
       elif elements[0] == 'RAD':
         sphere['RAD'] = float(elements[1])
         del elements[0:2]
+      elif len(elements) == 1 and elements[0] != "END_SCENE":
+        sphere['TEXTURE'] = elements[0]
+        del elements[0]
       else:
         break
+
+  def parse_sphere(self, elements):
+    sphere = {'type' : 'SPHERE'}
     self.objects.append(sphere)
+    self.parse_for_sphere(sphere, elements)
 
   def handle_sphere(self, elements):
     if elements[0] == 'SPHERE':
       self.parse_sphere(elements[1:])
-    elif len(elements) == 1 and elements[0] != "END_SCENE":
-      self.objects[-1]['TEXTURE'] = elements[0]
     else:
-      self.state = self.state[:-1]
-      self.handle_line(elements)
+      self.parse_for_sphere(self.objects[-1], elements)
+      if len(elements) > 0:
+        self.state = self.state[:-1]
+        self.handle_line(elements)
 
-  def parse_triangle(self, elements):
-    triangle = {'type' : 'TRI'}
+  def parse_for_triangle(self, triangle, elements):
     while len(elements) > 0:
       if elements[0] == 'V0':
         triangle['V0'] = numpy.array((elements[1], elements[2], elements[3]), dtype=numpy.float32)
@@ -93,19 +98,25 @@ class ParserDat(object):
       elif elements[0] == 'V2':
         triangle['V2'] = numpy.array((elements[1], elements[2], elements[3]), dtype=numpy.float32)
         del elements[0:4]
+      elif len(elements) == 1 and elements[0] != "END_SCENE":
+        triangle['TEXTURE'] = elements[0]
+        del elements[0]
       else:
         break
-    print triangle
+
+  def parse_triangle(self, elements):
+    triangle = {'type' : 'TRI'}
     self.objects.append(triangle)
+    self.parse_for_triangle(triangle, elements)
 
   def handle_triangle(self, elements):
     if elements[0] == 'TRI':
       self.parse_triangle(elements[1:])
-    elif len(elements) == 1 and elements[0] != "END_SCENE":
-      self.objects[-1]['TEXTURE'] = elements[0]
     else:
-      self.state = self.state[:-1]
-      self.handle_line(elements)
+      self.parse_for_triangle(self.objects[-1], elements)
+      if len(elements) > 0:
+        self.state = self.state[:-1]
+        self.handle_line(elements)
 
   def parse_texture(self, elements):
     texture = {}
@@ -196,11 +207,11 @@ class ParserDat(object):
         sphere.setDiffuse(self.textures[object['TEXTURE']]['DIFFUSE'])
         scene.addPrimitive(sphere)
       if object['type'] == 'TRI':
-        sphere = IRT.Triangle(object['V0'], object['V1'], object['V2'])
-        sphere.setColor(self.textures[object['TEXTURE']]['COLOR'])
-        sphere.setReflection(self.textures[object['TEXTURE']]['SPECULAR'])
-        sphere.setDiffuse(self.textures[object['TEXTURE']]['DIFFUSE'])
-        scene.addPrimitive(sphere)
+        triangle = IRT.Triangle(object['V0'], object['V1'], object['V2'])
+        triangle.setColor(self.textures[object['TEXTURE']]['COLOR'])
+        triangle.setReflection(self.textures[object['TEXTURE']]['SPECULAR'])
+        triangle.setDiffuse(self.textures[object['TEXTURE']]['DIFFUSE'])
+        scene.addPrimitive(triangle)
 
   def create(self, Raytracer, scene):
     raytracer = Raytracer(*self.raytracer_params['RESOLUTION'])
