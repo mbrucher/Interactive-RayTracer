@@ -30,7 +30,7 @@ class Sample(object):
     box.setReflection(.25)
     #self.scene.addPrimitive(box)
     
-    triangle = IRT.Triangle(numpy.array((-12., 0., 30.), dtype=numpy.float32), numpy.array((12., 12., 28.), dtype=numpy.float32), numpy.array((0., -12., 28.), dtype=numpy.float32))
+    triangle = IRT.Triangle(numpy.array((-6., 0., 30.), dtype=numpy.float32), numpy.array((6., 6., 28.), dtype=numpy.float32), numpy.array((0., -6., 28.), dtype=numpy.float32))
     triangle.setColor(numpy.array((1., 1., 1.), dtype=numpy.float32))
     triangle.setReflection(.1)
     triangle.setDiffuse(.4)
