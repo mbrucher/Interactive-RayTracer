@@ -144,8 +144,9 @@ namespace IRT
   }
   
   Triangle::Triangle(const Point3df& corner1, const Point3df& corner2, const Point3df& corner3) :
-  corner1(corner1), corner2(corner2), corner3(corner3)
+  corner1(corner1), corner2(corner2), corner3(corner3), v0(corner3 - corner1), v1(corner2 - corner1), normal(v1.cross(v0))
   {
+    normalize(normal);
   }
   
   Triangle::~Triangle()
@@ -154,10 +155,6 @@ namespace IRT
   
   bool Triangle::intersect(const Ray& ray, float& dist) const
   {
-    Vector3df v0 = corner3 - corner1;
-    Vector3df v1 = corner2 - corner1;
-
-    Vector3df normal = v1.cross(v0);
     float d = corner1.dot(normal);
     
     float coeff = ray.direction().dot(normal);
@@ -188,13 +185,7 @@ namespace IRT
   
   void Triangle::computeColorNormal(const Ray& ray, float dist, MaterialPoint& caracteristics) const
   {
-    caracteristics.normal = (corner2 - corner1).cross(corner3 - corner1);
-    
-    normalize(caracteristics.normal);
-    if(ray.direction().dot(caracteristics.normal) > 0)
-    {
-      caracteristics.normal = - caracteristics.normal;
-    }
+    caracteristics.normal = normal;
   }
   
   BoundingBox Triangle::getBoundingBox() const

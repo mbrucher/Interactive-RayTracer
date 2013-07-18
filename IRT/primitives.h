@@ -210,6 +210,12 @@ namespace IRT
     Point3df corner2;
     /// Third corner
     Point3df corner3;
+    /// First direction
+    Point3df v0;
+    /// Second direction
+    Point3df v1;
+    /// Normal
+    Point3df normal;
   };
 }
 
