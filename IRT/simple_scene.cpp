@@ -84,6 +84,13 @@ namespace IRT
     float dist;
     return tree.getFirstCollision<KDTree<Primitive>::HitLevelTraversal>(ray, dist, tnear, tfar);
   }
+  
+  long SimpleScene::getHitDistance(const Ray& ray, float tnear, float tfar)
+  {
+    float dist;
+    tree.getFirstCollision<KDTree<Primitive>::HitLevelTraversal>(ray, dist, tnear, tfar);
+    return dist;
+  }
 
   const Color SimpleScene::computeColor(const Point3df& center, const MaterialPoint& caracteristics, const Primitive* primitive)
   {

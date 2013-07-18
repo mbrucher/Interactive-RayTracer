@@ -102,6 +102,20 @@ namespace IRT
       
       level = scene->getHitLevel(ray, tnear, tfar);
     }
+    
+    void hitDistance(const Ray& ray, long& dist)
+    {
+      DataType tnear;
+      DataType tfar;
+      
+      if(!scene->getBoundingBox().getEntryExitDistances(ray, tnear, tfar))
+      {
+        dist = 0;
+        return;
+      }
+      
+      dist = scene->getHitDistance(ray, tnear, tfar);
+    }
 
     /// Maximum recursion level
     unsigned int levels;
@@ -204,20 +218,38 @@ namespace IRT
     /**
      * @brief checkDraw allows to display some information of how the raytracer works
      * @param screen is the screen where everything will be drawn
-     * @param type is 0 to get kd-tree hit level
+     * @param type is 0 to get kd-tree hit level, 1 to check distance
      */
     void checkDraw(long* screen, long type)
     {
       Ray ray(origin, direction);
       const BoundingBox& bb = scene->getBoundingBox();
-      for(unsigned int j = 0; j < pixelHeight; ++j)
+      
+      switch(type)
       {
-        for(unsigned int i = 0; i < pixelWidth; ++i)
+      case 0:
+        for(unsigned int j = 0; j < pixelHeight; ++j)
         {
-          generateRay(i, j, ray);
-          if(mustShoot(ray, bb))
+          for(unsigned int i = 0; i < pixelWidth; ++i)
           {
-            hitLevel(ray, screen[j * pixelWidth + i]);
+            generateRay(i, j, ray);
+            if(mustShoot(ray, bb))
+            {
+              hitLevel(ray, screen[j * pixelWidth + i]);
+            }
+          }
+        }
+        break;
+      case 1:
+        for(unsigned int j = 0; j < pixelHeight; ++j)
+        {
+          for(unsigned int i = 0; i < pixelWidth; ++i)
+          {
+            generateRay(i, j, ray);
+            if(mustShoot(ray, bb))
+            {
+              hitDistance(ray, screen[j * pixelWidth + i]);
+            }
           }
         }
       }

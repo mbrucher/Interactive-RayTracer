@@ -92,6 +92,13 @@ namespace IRT
      * @return the hit level
      */
     _export_tools long getHitLevel(const Ray& ray, float tfar, float tnear);
+    
+    /**
+     * Returns the hit distance in the tree
+     * @param ray is the ray to test
+     * @return the hit distance
+     */
+    _export_tools long getHitDistance(const Ray& ray, float tfar, float tnear);
 
     /**
      * Computes the color

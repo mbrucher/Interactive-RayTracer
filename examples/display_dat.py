@@ -243,6 +243,14 @@ class ParserDat(object):
     raytracer.checkDraw(screen, 0)
     print "Elapsed %f" % (time.time() - current)
     return screen
+  
+  def create_hitdistance(self, raytracer):
+    import time
+    screen = numpy.zeros((self.raytracer_params['RESOLUTION'][1], self.raytracer_params['RESOLUTION'][0]), dtype=numpy.long)
+    current = time.time()
+    raytracer.checkDraw(screen, 1)
+    print "Elapsed %f" % (time.time() - current)
+    return screen
 
 def parse_dat(file):
   scene = IRT.SimpleScene()
@@ -251,8 +259,6 @@ def parse_dat(file):
   parser.parse()
   parser.populate(scene)
   raytracer = parser.create(IRT.Raytracer_Jittered, scene)
-  #raytracer.setOversampling(1)
-  #raytracer.setLevels(0)
 
   im = parser.create_image(raytracer)
   return im
@@ -264,10 +270,19 @@ def hitlevel_dat(file):
   parser.parse()
   parser.populate(scene)
   raytracer = parser.create(IRT.Raytracer_Jittered, scene)
-  #raytracer.setOversampling(1)
-  #raytracer.setLevels(0)
   
   im = parser.create_hitlevel(raytracer)
+  return im
+
+def hitdistance_dat(file):
+  scene = IRT.SimpleScene()
+  
+  parser = ParserDat(file)
+  parser.parse()
+  parser.populate(scene)
+  raytracer = parser.create(IRT.Raytracer_Jittered, scene)
+  
+  im = parser.create_hitdistance(raytracer)
   return im
 
 if __name__ == "__main__":
