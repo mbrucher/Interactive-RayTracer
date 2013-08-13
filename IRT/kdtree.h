@@ -332,14 +332,14 @@ namespace IRT
         }
 
         Primitive* primitive = current_node->getFirstCollision(ray, dist);
-        if(primitive != NULL)
+        if(primitive != NULL && dist <= stack[exitpoint].t)
         {
           return traversal.returnFrom(primitive);
         }
         entrypoint = exitpoint;
         current_node = stack[exitpoint].node;
         traversal.updateFrom(stack[exitpoint]);
-        exitpoint = stack[entrypoint].previous;
+        exitpoint = stack[exitpoint].previous;
       }
 
       return traversal.defaultReturn();
@@ -359,18 +359,13 @@ namespace IRT
           traversal.update();
           return current_node->leftNode();
         }
-        if (stack[exitpoint].pb(axis) == splitpos)
-        {
-          traversal.update();
-          return current_node->rightNode();
-        }
         traversal.update();
         far_node = current_node->rightNode();
         current_node = current_node->leftNode();
       }
       else
       {
-        if (stack[exitpoint].pb(axis) > splitpos)
+        if (stack[exitpoint].pb(axis) >= splitpos)
         {
           traversal.update();
           return current_node->rightNode();
