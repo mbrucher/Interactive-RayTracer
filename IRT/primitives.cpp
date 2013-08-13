@@ -155,12 +155,11 @@ namespace IRT
   
   bool Triangle::intersect(const Ray& ray, float& dist) const
   {
-    float d = corner1.dot(normal);
-    
     float coeff = ray.direction().dot(normal);
     if(std::abs(coeff) < std::numeric_limits<float>::epsilon())
       return false;
   
+    float d = corner1.dot(normal);
     dist = - (ray.origin().dot(normal) - d) / coeff;
     
     Vector3df intersect = ray.origin() + ray.direction() * dist;

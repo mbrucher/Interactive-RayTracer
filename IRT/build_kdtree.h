@@ -110,11 +110,11 @@ namespace IRT
         const BoundingBox& bb_primitive = (*primitive)->getBoundingBox();
         for(int i = 0; i < 3; ++i)
         {
-          if (bb_primitive.corner1(i) > bb.corner1(i) && bb_primitive.corner1(i) < bb.corner2(i))
+          if (bb_primitive.corner1(i) >= bb.corner1(i) && bb_primitive.corner1(i) <= bb.corner2(i))
           {
             split_positions.insert(std::make_pair(i, bb_primitive.corner1(i)));
           }
-          if (bb_primitive.corner2(i) > bb.corner1(i) && bb_primitive.corner2(i) < bb.corner2(i))
+          if (bb_primitive.corner2(i) >= bb.corner1(i) && bb_primitive.corner2(i) <= bb.corner2(i))
           {
             split_positions.insert(std::make_pair(i, bb_primitive.corner2(i)));
           }
@@ -135,11 +135,11 @@ namespace IRT
       {
         const BoundingBox& bb = (*primitive)->getBoundingBox();
         
-        if(bb.corner1(axis) < split_position)
+        if(bb.corner1(axis) <= split_position)
         {
          left_primitives.push_back(*primitive);
         }
-        if(bb.corner2(axis) > split_position)
+        if(bb.corner2(axis) >= split_position)
         {
          right_primitives.push_back(*primitive);
         }

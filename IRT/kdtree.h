@@ -96,20 +96,16 @@ namespace IRT
 
         for(typename std::vector<Primitive*>::const_iterator it = getPrimitives()->begin(); it != getPrimitives()->end(); ++it)
         {
-          float dist;
-          bool test = (*it)->intersect(ray, dist);
+          float cur_dist;
+          bool test = (*it)->intersect(ray, cur_dist);
 
-          if(test && (0.0001f < dist) && (dist < min_dist))
+          if(test && (0.0001f < cur_dist) && (cur_dist < min_dist))
           {
             min_primitive = *it;
-            min_dist = dist;
+            dist = cur_dist;
           }
         }
 
-        if(!(min_primitive == NULL))
-        {
-          dist = min_dist;
-        }
         return min_primitive;
       }
 
@@ -328,7 +324,7 @@ namespace IRT
       stack[exitpoint].node = NULL;
       traversal.updateTo(stack[entrypoint]);
 
-      while (current_node != NULL)
+      while(current_node != NULL)
       {
         while(!current_node->isLeaf())
         {
