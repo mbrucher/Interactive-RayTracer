@@ -238,7 +238,7 @@ class ParserDat(object):
   
   def create_hitlevel(self, raytracer):
     import time
-    screen = numpy.zeros((self.raytracer_params['RESOLUTION'][1], self.raytracer_params['RESOLUTION'][0]), dtype=numpy.long)
+    screen = numpy.zeros((self.raytracer_params['RESOLUTION'][1], self.raytracer_params['RESOLUTION'][0]), dtype=numpy.int32)
     current = time.time()
     raytracer.checkDraw(screen, 0)
     print "Elapsed %f" % (time.time() - current)
@@ -246,7 +246,7 @@ class ParserDat(object):
   
   def create_hitdistance(self, raytracer):
     import time
-    screen = numpy.zeros((self.raytracer_params['RESOLUTION'][1], self.raytracer_params['RESOLUTION'][0]), dtype=numpy.long)
+    screen = numpy.zeros((self.raytracer_params['RESOLUTION'][1], self.raytracer_params['RESOLUTION'][0]), dtype=numpy.int32)
     current = time.time()
     raytracer.checkDraw(screen, 1)
     print "Elapsed %f" % (time.time() - current)

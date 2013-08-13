@@ -264,7 +264,7 @@ namespace IRT
     
     struct HitLevelTraversal
     {
-      typedef long Return;
+      typedef int Return;
       typedef KDStackStats Stack;
       HitLevelTraversal()
       :level(0)
@@ -276,7 +276,7 @@ namespace IRT
       {
         return level;
       }
-      long level;
+      int level;
       Return defaultReturn()
       {
         return 1;

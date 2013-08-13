@@ -90,7 +90,7 @@ namespace IRT
       orientation_v *= height / pixelHeight;
     }
     
-    void hitLevel(const Ray& ray, long& level)
+    void hitLevel(const Ray& ray, int& level)
     {
       DataType tnear;
       DataType tfar;
@@ -103,7 +103,7 @@ namespace IRT
       level = scene->getHitLevel(ray, tnear, tfar);
     }
     
-    void hitDistance(const Ray& ray, long& dist)
+    void hitDistance(const Ray& ray, int& dist)
     {
       DataType tnear;
       DataType tfar;
@@ -220,7 +220,7 @@ namespace IRT
      * @param screen is the screen where everything will be drawn
      * @param type is 0 to get kd-tree hit level, 1 to check distance
      */
-    void checkDraw(long* screen, long type)
+    void checkDraw(int* screen, long type)
     {
       Ray ray(origin, direction);
       const BoundingBox& bb = scene->getBoundingBox();

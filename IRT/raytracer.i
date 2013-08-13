@@ -35,12 +35,12 @@ else
 }
 
 %typemap(typecheck)
-(long* INPLACE_ARRAY)
+(int* INPLACE_ARRAY)
 {
   $1 = is_array($input) && PyArray_EquivTypenums(array_type($input), CheckTypeKind);
 }
 %typemap(in)
-(long* INPLACE_ARRAY)
+(int* INPLACE_ARRAY)
 (PyArrayObject* array=NULL)
 {
 if(is_array($input) && PyArray_EquivTypenums(array_type($input), CheckTypeKind))
@@ -65,7 +65,7 @@ namespace IRT
     ~Raytracer();
 
     void draw(IRT::DataType* INPLACE_ARRAY);
-    void checkDraw(long* INPLACE_ARRAY, long type);
+    void checkDraw(int* INPLACE_ARRAY, long type);
     void setResolution(unsigned long pixelWidth, unsigned long pixelHeight);
     std::pair<unsigned long, unsigned long> getResolution();
     void setScene(IRT::SimpleScene* scene);

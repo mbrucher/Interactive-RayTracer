@@ -10,7 +10,7 @@
 %fragment("NumPy_Fragments");
 %{
   const int DataTypeKind = NPY_FLOAT;
-  const int CheckTypeKind = NPY_LONG;
+  const int CheckTypeKind = NPY_INT;
 %}
 %init %{
 import_array();
