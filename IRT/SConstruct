@@ -11,7 +11,7 @@ env['libmain'] = libmain
 
 env.Append(SWIGFLAGS=['-c++'])
 if env['parallel']:
-  libwrapper = env.PythonModule('_IRT', ['IRT.i', ], LIBS=['IRT', ] + env['TBB_LIBS'])
+  libwrapper = env.PythonModule('_IRT', ['IRT.i', ], CPPPATH=env['TBB_INC'], LIBPATH=env['TBB_INC_LIB'], LIBS=['IRT', ] + env['TBB_LIBS'])
 else:
   libwrapper = env.PythonModule('_IRT', ['IRT.i', ], LIBS=['IRT', ])
 

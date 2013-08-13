@@ -3,5 +3,7 @@ Import('env')
 
 env['CPPDEFINES'] += ["USE_TBB", ]
 env['TBB_LIBS'] = ["tbb", "tbbmalloc", ]
+env['TBB_INC'] = [env["tbbdir"] + "/include"] # check if existing first!
+env['TBB_INC_LIB'] = [env["tbbdir"] + "/lib"] # check if existing first!
 
 Return('env')

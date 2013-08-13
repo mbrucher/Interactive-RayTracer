@@ -37,7 +37,7 @@ def SWIGSharedLibrary(env, library, sources, **args):
   if sys.platform == "darwin":
     args['SHLIBSUFFIX'] = ".so"
 
-  cat=env.SharedLibrary(library, sourcesbis, **args)
+  cat=env.AddSharedLibrary(library, sourcesbis, **args)
   return cat
 
 env['BUILDERS']['PythonModule'] = SWIGSharedLibrary
