@@ -13,7 +13,7 @@
 #include "IRT/samplers/uniform_sampler.h"
 %}
 
-%typecheck(SWIG_TYPECHECK_DOUBLE_ARRAY)
+%typemap(typecheck)
   (IRT::DataType* INPLACE_ARRAY)
 {
   $1 = is_array($input) && PyArray_EquivTypenums(array_type($input), DataTypeKind);
@@ -22,11 +22,19 @@
   (IRT::DataType* INPLACE_ARRAY)
   (PyArrayObject* array=NULL)
 {
+if(is_array($input) && PyArray_EquivTypenums(array_type($input), DataTypeKind))
+{
   array = obj_to_array_no_conversion($input, DataTypeKind);
   $1 = ($1_ltype) array->data;
 }
+else
+{
+  PyErr_SetString(PyExc_ValueError, "Not the proper value type");
+  return NULL;
+}
+}
 
-%typecheck(SWIG_TYPECHECK_DOUBLE_ARRAY)
+%typemap(typecheck)
 (long* INPLACE_ARRAY)
 {
   $1 = is_array($input) && PyArray_EquivTypenums(array_type($input), CheckTypeKind);
@@ -35,8 +43,16 @@
 (long* INPLACE_ARRAY)
 (PyArrayObject* array=NULL)
 {
+if(is_array($input) && PyArray_EquivTypenums(array_type($input), CheckTypeKind))
+{
   array = obj_to_array_no_conversion($input, CheckTypeKind);
   $1 = ($1_ltype) array->data;
+}
+else
+{
+  PyErr_SetString(PyExc_ValueError, "Not the proper value type");
+  return NULL;
+}
 }
 
 namespace IRT
