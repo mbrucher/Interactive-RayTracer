@@ -240,11 +240,11 @@ namespace IRT
     {
       typedef Primitive* Return;
       typedef KDStack Stack;
-      Primitive* returnFrom(Primitive* primitive)
+      Return returnFrom(Primitive* primitive)
       {
         return primitive;
       }
-      Primitive* defaultReturn()
+      Return defaultReturn()
       {
         return NULL;
       }
@@ -272,12 +272,12 @@ namespace IRT
         
       }
       
-      long returnFrom(Primitive* primitive)
+      Return returnFrom(Primitive* primitive)
       {
         return level;
       }
       long level;
-      long defaultReturn()
+      Return defaultReturn()
       {
         return 1;
       }
