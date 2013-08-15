@@ -14,7 +14,7 @@
 namespace IRT
 {
   SimpleScene::SimpleScene()
-    :primitives(), lights()
+    :triangles(), lights()
   {
     bb.corner1 = Point3df::Constant(std::numeric_limits<float>::max());
     bb.corner2 = Point3df::Constant(std::numeric_limits<float>::min());
@@ -22,24 +22,24 @@ namespace IRT
 
   SimpleScene::~SimpleScene()
   {
-    for(std::vector<Primitive*>::const_iterator it = primitives.begin(); it != primitives.end(); ++it)
+    for(std::vector<Triangle*>::const_iterator it = triangles.begin(); it != triangles.end(); ++it)
       delete *it;
     for(std::vector<Light*>::const_iterator it = lights.begin(); it != lights.end(); ++it)
       delete *it;
   }
 
-  Primitive* SimpleScene::getPrimitive(unsigned long index)
+  Triangle* SimpleScene::getTriangle(unsigned long index)
   {
-    return primitives[index];
+    return triangles[index];
   }
 
-  Primitive* SimpleScene::removePrimitive(unsigned long index)
+  Triangle* SimpleScene::removeTriangle(unsigned long index)
   {
-    std::vector<Primitive*>::iterator it = primitives.begin();
+    std::vector<Triangle*>::iterator it = triangles.begin();
     std::advance(it, index);
-    Primitive* primitive = *it;
-    primitives.erase(it);
-    return primitive;
+    Triangle* triangle = *it;
+    triangles.erase(it);
+    return triangle;
   }
 
   const BoundingBox& SimpleScene::getBoundingBox() const
@@ -49,10 +49,10 @@ namespace IRT
 
   void SimpleScene::computeBoundingBox()
   {
-    std::vector<Primitive*>::iterator it = primitives.begin();
+    std::vector<Triangle*>::iterator it = triangles.begin();
     bb = (*it)->getBoundingBox();
 
-    for(++it; it != primitives.end(); ++it)
+    for(++it; it != triangles.end(); ++it)
     {
       BoundingBox bb_bis = (*it)->getBoundingBox();
       bb.corner1 = bb.corner1.array().min(bb_bis.corner1.array());
@@ -74,25 +74,25 @@ namespace IRT
     return light;
   }
   
-  Primitive* SimpleScene::getFirstCollision(const Ray& ray, float& dist, float tnear, float tfar)
+  Triangle* SimpleScene::getFirstCollision(const Ray& ray, float& dist, float tnear, float tfar)
   {
-    return tree.getFirstCollision<KDTree<Primitive>::DefaultTraversal>(ray, dist, tnear, tfar);
+    return tree.getFirstCollision<KDTree<Triangle>::DefaultTraversal>(ray, dist, tnear, tfar);
   }
   
   long SimpleScene::getHitLevel(const Ray& ray, float tnear, float tfar)
   {
     float dist;
-    return tree.getFirstCollision<KDTree<Primitive>::HitLevelTraversal>(ray, dist, tnear, tfar);
+    return tree.getFirstCollision<KDTree<Triangle>::HitLevelTraversal>(ray, dist, tnear, tfar);
   }
   
   long SimpleScene::getHitDistance(const Ray& ray, float tnear, float tfar)
   {
     float dist;
-    tree.getFirstCollision<KDTree<Primitive>::HitLevelTraversal>(ray, dist, tnear, tfar);
+    tree.getFirstCollision<KDTree<Triangle>::HitLevelTraversal>(ray, dist, tnear, tfar);
     return dist;
   }
 
-  const Color SimpleScene::computeColor(const Point3df& center, const MaterialPoint& caracteristics, const Primitive* primitive)
+  const Color SimpleScene::computeColor(const Point3df& center, const MaterialPoint& caracteristics, const Triangle* triangle)
   {
     Color t_color(Color::Zero());
     for(std::vector<Light*>::const_iterator it = lights.begin(); it != lights.end(); ++it)
@@ -104,10 +104,10 @@ namespace IRT
       if(testCollision(ray, pathSize))
         continue;
 
-      float cosphi = path.dot(caracteristics.normal) * primitive->getDiffuse();
+      float cosphi = path.dot(caracteristics.normal) * triangle->getDiffuse();
       if(cosphi < 0.)
         continue;
-      t_color += (primitive->getColor() * cosphi).cwiseProduct((*it)->computeColor(ray, pathSize));
+      t_color += (triangle->getColor() * cosphi).cwiseProduct((*it)->computeColor(ray, pathSize));
     }
 
     return t_color;
@@ -115,41 +115,41 @@ namespace IRT
 
   bool SimpleScene::testCollision(const Ray& ray, float dist)
   {
-    return (tree.getFirstCollision<KDTree<Primitive>::DefaultTraversal>(ray, dist, 0, dist) != NULL);
+    return (tree.getFirstCollision<KDTree<Triangle>::DefaultTraversal>(ray, dist, 0, dist) != NULL);
   }
 
-  unsigned long SimpleScene::addPrimitive(Primitive* primitive)
+  unsigned long SimpleScene::addTriangle(Triangle* triangle)
   {
-    if(std::find(primitives.begin(), primitives.end(), primitive) != primitives.end())
-      throw std::out_of_range("Primitive already added");
+    if(std::find(triangles.begin(), triangles.end(), triangle) != triangles.end())
+      throw std::out_of_range("Triangle already added");
 
-    BoundingBox primitive_bb = primitive->getBoundingBox();
-    bb.corner1 = bb.corner1.array().min(primitive_bb.corner1.array());
-    bb.corner2 = bb.corner2.array().max(primitive_bb.corner2.array());
+    BoundingBox triangle_bb = triangle->getBoundingBox();
+    bb.corner1 = bb.corner1.array().min(triangle_bb.corner1.array());
+    bb.corner2 = bb.corner2.array().max(triangle_bb.corner2.array());
 
-    primitives.push_back(primitive);
-    return primitives.size() - 1;
+    triangles.push_back(triangle);
+    return triangles.size() - 1;
   }
 
-  std::vector<unsigned long> SimpleScene::addPrimitives(const std::vector<IRT::Primitive*>& primitives)
+  std::vector<unsigned long> SimpleScene::addTriangles(const std::vector<IRT::Triangle*>& triangles)
   {
     std::vector<unsigned long> indices;
     
-    for(auto it = primitives.begin(); it != primitives.end(); ++it)
+    for(auto it = triangles.begin(); it != triangles.end(); ++it)
     {
-      indices.push_back(addPrimitive(*it));
+      indices.push_back(addTriangle(*it));
     }
 
     return indices;
   }
 
-  unsigned long SimpleScene::getPrimitiveIndex(Primitive* primitive)
+  unsigned long SimpleScene::getTriangleIndex(Triangle* triangle)
   {
-    std::vector<Primitive*>::const_iterator it;
-    if((it = std::find(primitives.begin(), primitives.end(), primitive)) != primitives.end())
-      return it - primitives.begin();
+    std::vector<Triangle*>::const_iterator it;
+    if((it = std::find(triangles.begin(), triangles.end(), triangle)) != triangles.end())
+      return it - triangles.begin();
 
-    throw std::out_of_range("Primitive not found!");
+    throw std::out_of_range("Triangle not found!");
   }
 
   unsigned long SimpleScene::addLight(Light* light)
@@ -170,12 +170,12 @@ namespace IRT
     throw std::out_of_range("Light not found!");
   }
 
-  const std::vector<Primitive*>& SimpleScene::getPrimitives() const
+  const std::vector<Triangle*>& SimpleScene::getTriangles() const
   {
-    return primitives;
+    return triangles;
   }
 
-  KDTree<Primitive>& SimpleScene::getKDTree()
+  KDTree<Triangle>& SimpleScene::getKDTree()
   {
     return tree;
   }

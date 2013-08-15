@@ -1,6 +1,6 @@
 /**
  * \file build_kdtree.h
- * The kd-tree implementation for fast primitive lookup
+ * The kd-tree implementation for fast triangle lookup
  */
 
 #ifndef BUILDKDTREE
@@ -21,8 +21,8 @@ namespace IRT
   {
     static void custom_build(IRT::SimpleScene* scene, int remaining_depth, int remaining_failures, DataType enhancement_ratio_failure)
     {
-      KDTree<Primitive>& tree = scene->getKDTree();
-      tree.setPrimitives(scene->getPrimitives());
+      KDTree<Triangle>& tree = scene->getKDTree();
+      tree.setTriangles(scene->getTriangles());
       subdivide(tree, &tree.getNodes()[0], scene->getBoundingBox(), remaining_depth, remaining_failures, enhancement_ratio_failure);
     }
 
@@ -34,32 +34,32 @@ namespace IRT
       DataType K1 = 1.;
       DataType K2 = .2;
 
-      int remaining_depth = static_cast<int>(std::ceil(k1 * std::log(static_cast<DataType>(scene->getPrimitives().size())) + k2));
+      int remaining_depth = static_cast<int>(std::ceil(k1 * std::log(static_cast<DataType>(scene->getTriangles().size())) + k2));
       int remaining_failures = static_cast<int>(std::ceil(K1 + remaining_depth * K2));
       DataType enhancement_ratio_failure = .75;
 
       custom_build(scene, remaining_depth, remaining_failures, enhancement_ratio_failure);
     }
 
-    static void subdivide(KDTree<Primitive>& tree, KDTree<Primitive>::KDTreeNode* node, const BoundingBox& bb, int remaining_depth, int remaining_failures, DataType enhancement_ratio_failure)
+    static void subdivide(KDTree<Triangle>& tree, KDTree<Triangle>::KDTreeNode* node, const BoundingBox& bb, int remaining_depth, int remaining_failures, DataType enhancement_ratio_failure)
     {
       const std::set<std::pair<int, DataType> >& split_positions = getSplitPositions(node, bb);
 
       DataType lowest_cost = std::numeric_limits<DataType>::max();
       std::pair<int, DataType> lowest_split = std::make_pair(-1, 0.);
-      std::vector<Primitive*> right_primitives, left_primitives;
+      std::vector<Triangle*> right_triangles, left_triangles;
 
       for(std::set<std::pair<int, DataType> >::const_iterator it = split_positions.begin(); it != split_positions.end(); ++it)
       {
-        std::vector<Primitive*> right_primitives_test, left_primitives_test;
+        std::vector<Triangle*> right_triangles_test, left_triangles_test;
 
-        DataType new_cost = computeCost(it->first, it->second, bb, node->getPrimitives(), right_primitives_test, left_primitives_test);
-        new_cost = (new_cost + 0.3) / (bb.SAH() * node->getPrimitives()->size());
+        DataType new_cost = computeCost(it->first, it->second, bb, node->getTriangles(), right_triangles_test, left_triangles_test);
+        new_cost = (new_cost + 0.3) / (bb.SAH() * node->getTriangles()->size());
 
         if(new_cost < lowest_cost)
         {
-          right_primitives_test.swap(right_primitives);
-          left_primitives_test.swap(left_primitives);
+          right_triangles_test.swap(right_triangles);
+          left_triangles_test.swap(left_triangles);
           lowest_split = *it;
           lowest_cost = new_cost;
         }
@@ -67,22 +67,22 @@ namespace IRT
 
       if(lowest_split.first != -1 && (lowest_cost < enhancement_ratio_failure || --remaining_failures >= 0))
       {
-        KDTree<Primitive>::KDTreeNode* left_node = tree.getPairEmptyNodes();
-        KDTree<Primitive>::KDTreeNode* right_node = left_node + 1;
+        KDTree<Triangle>::KDTreeNode* left_node = tree.getPairEmptyNodes();
+        KDTree<Triangle>::KDTreeNode* right_node = left_node + 1;
 
-        std::vector<Primitive*>* left_store = tree.getNewPrimitivesStore();
-        left_store->swap(left_primitives);
-        left_node->setPrimitives(left_store);
+        std::vector<Triangle*>* left_store = tree.getNewTrianglesStore();
+        left_store->swap(left_triangles);
+        left_node->setTriangles(left_store);
 
-        std::vector<Primitive*>* right_store = tree.getNewPrimitivesStore();
-        right_store->swap(right_primitives);
-        right_node->setPrimitives(right_store);
+        std::vector<Triangle*>* right_store = tree.getNewTrianglesStore();
+        right_store->swap(right_triangles);
+        right_node->setTriangles(right_store);
 
         node->setAxis(lowest_split.first);
         node->setSplitPosition(lowest_split.second);
         node->setLeftNode(left_node);
         node->setLeaf(false);
-        tree.removeNewPrimitivesStore(node->getPrimitives());
+        tree.removeNewTrianglesStore(node->getTriangles());
 
         if(remaining_depth > 0 && left_store->size() > 1)
         {
@@ -101,22 +101,22 @@ namespace IRT
       }
     }
 
-    static std::set<std::pair<int, DataType> > getSplitPositions(const KDTree<Primitive>::KDTreeNode* node, const BoundingBox& bb)
+    static std::set<std::pair<int, DataType> > getSplitPositions(const KDTree<Triangle>::KDTreeNode* node, const BoundingBox& bb)
     {
       std::set<std::pair<int, DataType> > split_positions;
 
-      for(std::vector<Primitive*>::const_iterator primitive = node->getPrimitives()->begin(); primitive != node->getPrimitives()->end(); ++primitive)
+      for(std::vector<Triangle*>::const_iterator triangle = node->getTriangles()->begin(); triangle != node->getTriangles()->end(); ++triangle)
       {
-        const BoundingBox& bb_primitive = (*primitive)->getBoundingBox();
+        const BoundingBox& bb_triangle = (*triangle)->getBoundingBox();
         for(int i = 0; i < 3; ++i)
         {
-          if (bb_primitive.corner1(i) >= bb.corner1(i) && bb_primitive.corner1(i) <= bb.corner2(i))
+          if (bb_triangle.corner1(i) >= bb.corner1(i) && bb_triangle.corner1(i) <= bb.corner2(i))
           {
-            split_positions.insert(std::make_pair(i, bb_primitive.corner1(i)));
+            split_positions.insert(std::make_pair(i, bb_triangle.corner1(i)));
           }
-          if (bb_primitive.corner2(i) >= bb.corner1(i) && bb_primitive.corner2(i) <= bb.corner2(i))
+          if (bb_triangle.corner2(i) >= bb.corner1(i) && bb_triangle.corner2(i) <= bb.corner2(i))
           {
-            split_positions.insert(std::make_pair(i, bb_primitive.corner2(i)));
+            split_positions.insert(std::make_pair(i, bb_triangle.corner2(i)));
           }
         }
       }
@@ -124,28 +124,28 @@ namespace IRT
       return split_positions;
     }
 
-    static DataType computeCost(int axis, DataType split_position, const BoundingBox& bb, const std::vector<Primitive*>* primitives, std::vector<Primitive*>& right_primitives, std::vector<Primitive*>& left_primitives)
+    static DataType computeCost(int axis, DataType split_position, const BoundingBox& bb, const std::vector<Triangle*>* triangles, std::vector<Triangle*>& right_triangles, std::vector<Triangle*>& left_triangles)
     {
       BoundingBox bb_right, bb_left;
       bb_right = bb_left = bb;
       bb_right.corner1(axis) = split_position;
       bb_left.corner2(axis) = split_position;
 
-      for(std::vector<Primitive*>::const_iterator primitive = primitives->begin(); primitive != primitives->end(); ++primitive)
+      for(std::vector<Triangle*>::const_iterator triangle = triangles->begin(); triangle != triangles->end(); ++triangle)
       {
-        const BoundingBox& bb = (*primitive)->getBoundingBox();
+        const BoundingBox& bb = (*triangle)->getBoundingBox();
         
         if(bb.corner1(axis) <= split_position)
         {
-         left_primitives.push_back(*primitive);
+         left_triangles.push_back(*triangle);
         }
         if(bb.corner2(axis) >= split_position)
         {
-         right_primitives.push_back(*primitive);
+         right_triangles.push_back(*triangle);
         }
       }
 
-      return bb_right.SAH() * right_primitives.size() + bb_left.SAH() * left_primitives.size();
+      return bb_right.SAH() * right_triangles.size() + bb_left.SAH() * left_triangles.size();
     }
   };
 }

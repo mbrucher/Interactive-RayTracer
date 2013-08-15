@@ -57,13 +57,13 @@ namespace IRT
       }
 
       DataType dist;
-      Primitive* primitive = scene->getFirstCollision(ray, dist, tnear, tfar);
-      if(primitive == NULL)
+      Triangle* triangle = scene->getFirstCollision(ray, dist, tnear, tfar);
+      if(triangle == NULL)
         return;
 
       MaterialPoint caracteristics;
-      primitive->computeColorNormal(ray, dist, caracteristics);
-      color = scene->computeColor(ray.origin() + dist * ray.direction(), caracteristics, primitive);
+      triangle->computeColorNormal(ray, dist, caracteristics);
+      color = scene->computeColor(ray.origin() + dist * ray.direction(), caracteristics, triangle);
 
       if(level < levels)
       {
@@ -72,7 +72,7 @@ namespace IRT
         Color color_sec = Color::Zero();
         computeColor(ray_sec, color_sec, level+1);
 
-        color += color_sec * primitive->getReflection();
+        color += color_sec * triangle->getReflection();
       }
     }
 

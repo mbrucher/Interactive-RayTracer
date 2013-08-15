@@ -51,12 +51,12 @@
   delete $1;
 }
 
-%typemap(in) IRT::Primitive*
+%typemap(in) IRT::Triangle*
 {
   if ((SWIG_ConvertPtr($input,(void **)(&$1),$1_descriptor, SWIG_POINTER_EXCEPTION | SWIG_POINTER_DISOWN)) == -1) SWIG_fail;
 }
 
-%typemap(out) IRT::Primitive*
+%typemap(out) IRT::Triangle*
 {
   $result = SWIG_NewPointerObj($1, $1_descriptor, SWIG_POINTER_OWN);
 }
@@ -73,6 +73,8 @@
 
 namespace IRT
 {
+  class SimpleScene;
+
   class Primitive
   {
   public:
@@ -80,12 +82,13 @@ namespace IRT
     void setColor(IRT::Color& color);
     void setReflection(float reflection);
     void setDiffuse(float diffuse);
+    void addToScene(SimpleScene* scene);
   };
 
   class Sphere: public Primitive
   {
   public:
-    Sphere(IRT::Vector3df& ray, float dist);
+    Sphere(IRT::Vector3df& center, float dist);
     ~Sphere();
   };
   
@@ -96,11 +99,14 @@ namespace IRT
     ~Box();
   };
   
-  class Triangle: public Primitive
+  class Triangle
   {
   public:
     Triangle(IRT::Vector3df& corner1, IRT::Vector3df& corner2, IRT::Vector3df& corner3);
     ~Triangle();
+    void setColor(IRT::Color& color);
+    void setReflection(float reflection);
+    void setDiffuse(float diffuse);
   };
 }
 

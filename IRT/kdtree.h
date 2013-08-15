@@ -1,6 +1,6 @@
 /**
  * \file kdtree.h
- * The kd-tree implementation for fast primitive lookup
+ * The kd-tree implementation for fast triangle lookup
  */
 
 #ifndef KDTREE
@@ -15,7 +15,7 @@
 namespace IRT
 {
   /// The default class for the kd-tree
-  template<class Primitive>
+  template<class Triangle>
   class KDTree
   {
   public:
@@ -27,15 +27,15 @@ namespace IRT
       short axis;
       /// Indicates if the node is a leaf
       bool is_leaf;
-      /// The primitives that are in this leaf
-      const std::vector<Primitive*>* primitives;
+      /// The triangles that are in this leaf
+      const std::vector<Triangle*>* triangles;
       /// split position on an axis
       DataType split_position;
       /// Pointer to the left node
       KDTreeNode* left;
     public:
       KDTreeNode()
-      : is_leaf(true), primitives(NULL), left(NULL)
+      : is_leaf(true), triangles(NULL), left(NULL)
       {
       }
 
@@ -73,40 +73,40 @@ namespace IRT
       }
 
       /**
-       *  Sets the container of primitives
-       * @param primitives is the new primitives container
+       * Sets the container of triangles
+       * @param triangles is the new triangles container
        */
-      void setPrimitives(const std::vector<Primitive*>* primitives)
+      void setTriangles(const std::vector<Triangle*>* triangles)
       {
-        this->primitives = primitives;
+        this->triangles = triangles;
       }
 
       /**
-       * Returns the inner primitives
+       * Returns the inner triangles
        */
-      const std::vector<Primitive*>* getPrimitives() const
+      const std::vector<Triangle*>* getTriangles() const
       {
-        return primitives;
+        return triangles;
       }
 
-      Primitive* getFirstCollision(const Ray& ray, float& dist) const
+      Triangle* getFirstCollision(const Ray& ray, float& dist) const
       {
         float min_dist = std::numeric_limits<float>::max();
-        Primitive* min_primitive = NULL;
+        Triangle* min_triangle = NULL;
 
-        for(typename std::vector<Primitive*>::const_iterator it = getPrimitives()->begin(); it != getPrimitives()->end(); ++it)
+        for(typename std::vector<Triangle*>::const_iterator it = getTriangles()->begin(); it != getTriangles()->end(); ++it)
         {
           float cur_dist;
           bool test = (*it)->intersect(ray, cur_dist);
 
           if(test && (0.0001f < cur_dist) && (cur_dist < min_dist))
           {
-            min_primitive = *it;
+            min_triangle = *it;
             dist = cur_dist;
           }
         }
 
-        return min_primitive;
+        return min_triangle;
       }
 
       /// Returns the split position
@@ -163,19 +163,19 @@ namespace IRT
     };
 
   private:
-    /// The primitives that the kd-tree will browse
-    std::vector<Primitive*> primitives;
+    /// The triangles that the kd-tree will browse
+    std::vector<Triangle*> triangles;
     /// All the actual nodes of the binary tree
     std::vector<KDTreeNode> nodes;
-    std::list<std::vector<Primitive*> > nodes_primitives;
+    std::list<std::vector<Triangle*> > nodes_triangles;
 
     KDTree(const KDTree& tree);
 
     int mod[5];
   public:
     /**
-   * Constructs a kdtree for some primitives
-   * @param primitives is the primitives container
+   * Constructs a kdtree for some triangles
+   * @param triangles is the triangles container
    */
     KDTree()
     {
@@ -187,17 +187,17 @@ namespace IRT
     {
     }
 
-    void setPrimitives(const std::vector<Primitive*>& primitives)
+    void setTriangles(const std::vector<Triangle*>& triangles)
     {
-      this->primitives = primitives;
+      this->triangles = triangles;
       KDTreeNode node;
       node.setLeaf(true);
-      node.setPrimitives(&primitives);
+      node.setTriangles(&triangles);
 
       nodes.clear();
-      nodes.reserve(3 * primitives.size());
+      nodes.reserve(3 * triangles.size());
       nodes.push_back(node);
-      nodes_primitives.clear();
+      nodes_triangles.clear();
     }
 
     std::vector<KDTreeNode>& getNodes()
@@ -214,19 +214,19 @@ namespace IRT
       return &nodes[size];
     }
 
-    std::vector<Primitive*>* getNewPrimitivesStore()
+    std::vector<Triangle*>* getNewTrianglesStore()
     {
-      nodes_primitives.push_back(std::vector<Primitive*>());
-      return &nodes_primitives.back();
+      nodes_triangles.push_back(std::vector<Triangle*>());
+      return &nodes_triangles.back();
     }
 
-    void removeNewPrimitivesStore(const std::vector<Primitive*>* store)
+    void removeNewTrianglesStore(const std::vector<Triangle*>* store)
     {
-      for(typename std::list<std::vector<Primitive*> >::iterator it = nodes_primitives.begin(); it != nodes_primitives.end(); ++it)
+      for(typename std::list<std::vector<Triangle*> >::iterator it = nodes_triangles.begin(); it != nodes_triangles.end(); ++it)
       {
         if(store == &(*it))
         {
-          nodes_primitives.erase(it);
+          nodes_triangles.erase(it);
           return;
         }
       }
@@ -234,11 +234,11 @@ namespace IRT
     
     struct DefaultTraversal
     {
-      typedef Primitive* Return;
+      typedef Triangle* Return;
       typedef KDStack Stack;
-      Return returnFrom(Primitive* primitive)
+      Return returnFrom(Triangle* triangle)
       {
-        return primitive;
+        return triangle;
       }
       Return defaultReturn()
       {
@@ -268,7 +268,7 @@ namespace IRT
         
       }
       
-      Return returnFrom(Primitive* primitive)
+      Return returnFrom(Triangle* triangle)
       {
         return level;
       }
@@ -295,10 +295,10 @@ namespace IRT
     };
     
     /**
-     * Returns the first collision from a vector of Primitives
+     * Returns the first collision from a vector of Triangles
      * @param ray is the ray to test
-     * @param dist is the distance to the primitive
-     * @return the index of the hit primitive, else -1
+     * @param dist is the distance to the triangle
+     * @return the index of the hit triangle, else -1
      */
     template<class TraversalStructure>
     typename TraversalStructure::Return getFirstCollision(const Ray& ray, float& dist, float tnear, float tfar) const
@@ -331,10 +331,10 @@ namespace IRT
           current_node = splitNode<TraversalStructure>(ray, current_node, entrypoint, exitpoint, stack, traversal);
         }
 
-        Primitive* primitive = current_node->getFirstCollision(ray, dist);
-        if(primitive != NULL && dist <= stack[exitpoint].t)
+        Triangle* triangle = current_node->getFirstCollision(ray, dist);
+        if(triangle != NULL && dist <= stack[exitpoint].t)
         {
-          return traversal.returnFrom(primitive);
+          return traversal.returnFrom(triangle);
         }
         entrypoint = exitpoint;
         current_node = stack[exitpoint].node;

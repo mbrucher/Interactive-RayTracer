@@ -16,42 +16,71 @@ using namespace IRT;
 
 BOOST_AUTO_TEST_SUITE( irt_simplescene_suite )
 
+BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_addTriangle )
+{
+  Vector3df v0 = Vector3df::Zero();
+  v0 << 5, -5, 5;
+  Vector3df v1 = Vector3df::Zero();
+  v1 << 5, 5, 5;
+  Vector3df v2 = Vector3df::Zero();
+  v2 << -5, -5, -5;
+  Triangle* triangle = new Triangle(v0, v1, v2);
+  SimpleScene* scene = new SimpleScene;
+
+  BOOST_CHECK_NO_THROW(scene->addTriangle(triangle));
+  BOOST_CHECK_THROW(scene->addTriangle(triangle), std::out_of_range);
+
+  delete scene;
+}
+
 BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_addPrimitive )
 {
   Primitive* primitive = new Sphere(Vector3df::Zero(), 3.f);
   SimpleScene* scene = new SimpleScene;
 
-  BOOST_CHECK_NO_THROW(scene->addPrimitive(primitive));
-  BOOST_CHECK_THROW(scene->addPrimitive(primitive), std::out_of_range);
+  BOOST_CHECK_NO_THROW(primitive->addToScene(scene));
+  BOOST_CHECK_THROW(primitive->addToScene(scene), std::out_of_range);
 
   delete scene;
 }
 
-BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_getPrimitive )
+BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_getTriangle )
 {
-  Primitive* primitive = new Sphere(Vector3df::Zero(), 3.f);
+  Vector3df v0 = Vector3df::Zero();
+  v0 << 5, -5, 5;
+  Vector3df v1 = Vector3df::Zero();
+  v1 << 5, 5, 5;
+  Vector3df v2 = Vector3df::Zero();
+  v2 << -5, -5, -5;
+  Triangle* triangle = new Triangle(v0, v1, v2);
   SimpleScene* scene = new SimpleScene;
 
   unsigned long index = 0;;
-  BOOST_CHECK_NO_THROW(index = scene->addPrimitive(primitive));
+  BOOST_CHECK_NO_THROW(index = scene->addTriangle(triangle));
 
-  Primitive* result = scene->getPrimitive(index);
+  Triangle* result = scene->getTriangle(index);
 
-  BOOST_REQUIRE_EQUAL(primitive, result);
+  BOOST_REQUIRE_EQUAL(triangle, result);
 
-  result = scene->getPrimitive(index);
+  result = scene->getTriangle(index);
 
   delete scene;
 }
 
-BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_getPrimitiveIndex )
+BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_getTriangleIndex )
 {
-  Primitive* primitive = new Sphere(Vector3df::Zero(), 3.f);
+  Vector3df v0 = Vector3df::Zero();
+  v0 << 5, -5, 5;
+  Vector3df v1 = Vector3df::Zero();
+  v1 << 5, 5, 5;
+  Vector3df v2 = Vector3df::Zero();
+  v2 << -5, -5, -5;
+  Triangle* triangle = new Triangle(v0, v1, v2);
   SimpleScene* scene = new SimpleScene;
 
   unsigned long index = 0;
-  BOOST_REQUIRE_NO_THROW(index = scene->addPrimitive(primitive));
-  BOOST_REQUIRE_EQUAL(index, scene->getPrimitiveIndex(primitive));
+  BOOST_REQUIRE_NO_THROW(index = scene->addTriangle(triangle));
+  BOOST_REQUIRE_EQUAL(index, scene->getTriangleIndex(triangle));
 
   delete scene;
 }
@@ -61,7 +90,7 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_getBoundingBox )
   Primitive* primitive = new Sphere(Vector3df::Zero(), 3.f);
   SimpleScene* scene = new SimpleScene;
 
-  BOOST_CHECK_NO_THROW(scene->addPrimitive(primitive));
+  BOOST_CHECK_NO_THROW(primitive->addToScene(scene));
 
   BoundingBox bb;
   bb.corner1 = Point3df::Constant(-3);
@@ -75,7 +104,7 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_getBoundingBox )
   Vector3df vector1(elements1);
 
   primitive = new Sphere(vector1, 2.f);
-  BOOST_CHECK_NO_THROW(scene->addPrimitive(primitive));
+  BOOST_CHECK_NO_THROW(primitive->addToScene(scene));
 
   scene_bb = scene->getBoundingBox();
 
@@ -91,7 +120,7 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_computeBoundingBox )
   Primitive* primitive = new Sphere(Vector3df::Zero(), 3.f);
   SimpleScene* scene = new SimpleScene;
 
-  BOOST_CHECK_NO_THROW(scene->addPrimitive(primitive));
+  BOOST_CHECK_NO_THROW(primitive->addToScene(scene));
 
   BoundingBox bb;
   bb.corner1 = Point3df::Constant(-3);
@@ -106,7 +135,7 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_computeBoundingBox )
   Vector3df vector1(elements1);
 
   primitive = new Sphere(vector1, 2.f);
-  BOOST_CHECK_NO_THROW(scene->addPrimitive(primitive));
+  BOOST_CHECK_NO_THROW(primitive->addToScene(scene));
 
   scene->computeBoundingBox();
   scene_bb = scene->getBoundingBox();
@@ -118,22 +147,28 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_computeBoundingBox )
   BOOST_CHECK((bb.corner2 == scene_bb.corner2));
 }
 
-BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_removePrimitive )
+BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_removeTriangle )
 {
-  Primitive* primitive = new Sphere(Vector3df::Zero(), 3.f);
+  Vector3df v0 = Vector3df::Zero();
+  v0 << 5, -5, 5;
+  Vector3df v1 = Vector3df::Zero();
+  v1 << 5, 5, 5;
+  Vector3df v2 = Vector3df::Zero();
+  v2 << -5, -5, -5;
+  Triangle* triangle = new Triangle(v0, v1, v2);
   SimpleScene* scene = new SimpleScene;
 
   unsigned long index = 0;
-  BOOST_REQUIRE_NO_THROW(index = scene->addPrimitive(primitive));
+  BOOST_REQUIRE_NO_THROW(index = scene->addTriangle(triangle));
 
-  Primitive* result = scene->removePrimitive(index);
+  Triangle* result = scene->removeTriangle(index);
 
-  BOOST_CHECK(primitive == result);
-  Primitive* primitive2 = new Sphere(Vector3df::Zero(), 3.f);
-  scene->addPrimitive(primitive2);
-  BOOST_REQUIRE_NE(scene->getPrimitive(index), primitive);
+  BOOST_CHECK(triangle == result);
+  Triangle* triangle2 = new Triangle(v0, v1, v2);
+  scene->addTriangle(triangle2);
+  BOOST_REQUIRE_NE(scene->getTriangle(index), triangle);
 
-  delete primitive;
+  delete triangle;
   delete scene;
 }
 
@@ -196,13 +231,12 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_removeLight )
   delete scene;
 }
 
-BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_getFirstCollision )
+/*BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_getFirstCollision )
 {
   Primitive* primitive = new Sphere(Vector3df::Zero(), 3.f);
   SimpleScene* scene = new SimpleScene;
 
-  unsigned long index = 0;
-  BOOST_CHECK_NO_THROW(index = scene->addPrimitive(primitive));
+  BOOST_CHECK_NO_THROW(primitive->addToScene(scene));
   BuildKDTree::automatic_build(scene);
 
   float dist = 0;
@@ -212,7 +246,7 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_getFirstCollision )
   BOOST_CHECK_EQUAL(scene->getFirstCollision(Ray(Vector3df::Constant(-5.), Vector3df::Constant(-1.)), dist, tnear, tfar), static_cast<Primitive*>(NULL));
 
   delete scene;
-}
+}*/
 
 BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_testCollision )
 {
@@ -220,8 +254,7 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_testCollision )
   SimpleScene* scene = new SimpleScene;
   IRT::BuildKDTree::automatic_build(scene);
 
-  unsigned long index = 0;
-  BOOST_CHECK_NO_THROW(index = scene->addPrimitive(primitive));
+  BOOST_CHECK_NO_THROW(primitive->addToScene(scene));
 
   BOOST_CHECK(scene->testCollision(Ray(Vector3df::Constant(-5.), Vector3df::Constant(1.)), std::numeric_limits<float>::max()));
   BOOST_CHECK(!scene->testCollision(Ray(Vector3df::Constant(-5.), Vector3df::Constant(-1.)), std::numeric_limits<float>::max()));
@@ -231,24 +264,30 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_testCollision )
 
 BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_computeColor )
 {
-  Primitive* primitive = new Sphere(Vector3df::Zero(), 3.f);
-  primitive->setDiffuse(1);
+  Vector3df v0 = Vector3df::Zero();
+  v0 << 5, -5, 5;
+  Vector3df v1 = Vector3df::Zero();
+  v1 << 5, 5, 5;
+  Vector3df v2 = Vector3df::Zero();
+  v2 << -5, -5, -5;
+  std::unique_ptr<Triangle> triangle(new Triangle(v0, v1, v2));
+  triangle->setDiffuse(1);
   Light* light = new Light(Vector3df::Constant(5.), Vector3df::Constant(1.));
   SimpleScene* scene = new SimpleScene;
   IRT::BuildKDTree::automatic_build(scene);
 
   unsigned long index = 0;
   BOOST_CHECK_NO_THROW(index = scene->addLight(light));
-  BOOST_CHECK_NO_THROW(index = scene->addPrimitive(primitive));
+  BOOST_CHECK_NO_THROW(scene->addTriangle(triangle.get()));
 
   MaterialPoint material;
   material.normal = Normal3df::Constant(1.);
   material.normal.normalize();
 
-  BOOST_CHECK((scene->computeColor(Vector3df::Constant(4.), material, primitive) != Normal3df::Constant(0.f)));
-  std::cout << scene->computeColor(Vector3df::Constant(4.), material, primitive) << std::endl;
-  std::cout << scene->computeColor(Vector3df::Constant(-4.), material, primitive) << std::endl;
-  BOOST_CHECK((scene->computeColor(Vector3df::Constant(-4.), material, primitive) == Normal3df::Constant(0.f)));
+  BOOST_CHECK((scene->computeColor(Vector3df::Constant(4.), material, triangle.get()) != Normal3df::Constant(0.f)));
+  BOOST_CHECK((scene->computeColor(Vector3df::Constant(-4.), material, triangle.get()) == Normal3df::Constant(0.f)));
+
+  triangle.release();
 
   delete scene;
 }

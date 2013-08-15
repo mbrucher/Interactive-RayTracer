@@ -6,7 +6,7 @@
 #include "IRT/simple_scene.h"
 %}
 
-%apply Pointer NONNULL{IRT::Primitive*};
+%apply Pointer NONNULL{IRT::Triangle*};
 
 namespace IRT
 {
@@ -15,9 +15,9 @@ namespace IRT
   public:
     SimpleScene();
     ~SimpleScene();
-    IRT::Primitive* removePrimitive(unsigned long index);
-    unsigned long addPrimitive(IRT::Primitive* primitive);
-    std::vector<unsigned long> addPrimitives(const std::vector<IRT::Primitive*>& primitives);
+    IRT::Triangle* removeTriangle(unsigned long index);
+    unsigned long addTriangle(IRT::Triangle* Triangle);
+    std::vector<unsigned long> addTriangles(const std::vector<IRT::Triangle*>& triangles);
     IRT::Light* removeLight(unsigned long index);
     unsigned long addLight(IRT::Light* light);
     const BoundingBox& getBoundingBox();
