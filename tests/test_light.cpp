@@ -16,7 +16,7 @@ BOOST_AUTO_TEST_CASE( test_IRT_Light_color )
   Light* light = new IRT::Light(Vector3df::Zero(), Vector3df::Constant(1.));
 
   BOOST_CHECK( (light->computeColor(Ray(Vector3df::Zero(), Vector3df::Constant(1.)), 1.) == Vector3df::Constant(1.)) );
-  BOOST_CHECK( (light->computeColor(Ray(Vector3df::Zero(), Vector3df::Constant(1.)), 2.) == Vector3df::Constant(1.)) );
+  BOOST_CHECK( (light->computeColor(Ray(Vector3df::Zero(), Vector3df::Constant(1.)), 2.) == Vector3df::Constant(.25)) );
 
   delete light;
 }
