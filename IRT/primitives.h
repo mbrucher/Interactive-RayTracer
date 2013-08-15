@@ -10,6 +10,7 @@
 #include "ray.h"
 #include "bounding_box.h"
 
+#include <list>
 #include <vector>
 
 namespace IRT
@@ -140,6 +141,18 @@ namespace IRT
   protected:
     /// Vector of triangles for the primitive
     std::vector<Triangle*> triangles;
+    
+    struct TriPoints
+    {
+      TriPoints(const Point3df& p0, const Point3df& p1, const Point3df& p2)
+      :p0(p0), p1(p1), p2(p2)
+      {
+      }
+      
+      Point3df p0;
+      Point3df p1;
+      Point3df p2;
+    };
   };
 
   /// A simple sphere
@@ -151,11 +164,19 @@ namespace IRT
      * @param center is the center of the sphere
      * @param radius is the raius of the sphere
      */
-    _export_tools Sphere(const Point3df& center, DataType radius);
+    _export_tools Sphere(const Point3df& center, DataType radius, int refinement = 2);
 
     /// Destructor
     _export_tools ~Sphere();
   private:
+    /// Compute the middle point of a segment on the sphere
+    Point3df middlePoint(const Point3df& p1, const Point3df& p2);
+    /// Create initial mesh
+    std::list<TriPoints> createMesh();
+    /// Refine the sphere mesh
+    void refine(std::list<TriPoints>& list);
+    /// Generate the triangles
+    void generateTriangles(std::list<TriPoints>& list);
     /// Center of the sphere
     Point3df center;
     /// Radius of the sphere

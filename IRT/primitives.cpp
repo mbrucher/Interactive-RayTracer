@@ -47,13 +47,122 @@ namespace IRT
     scene->addTriangles(triangles);
   }
 
-  Sphere::Sphere(const Point3df& center, DataType radius) :
+  Sphere::Sphere(const Point3df& center, DataType radius, int refinement) :
     center(center), radius(radius)
   {
+    std::list<TriPoints> list = createMesh();
+    for(int i = 0; i < refinement; ++i)
+      refine(list);
+    generateTriangles(list);
   }
 
   Sphere::~Sphere()
   {
+  }
+  
+  std::list<Primitive::TriPoints> Sphere::createMesh()
+  {
+    std::list<TriPoints> list;
+    DataType t = t = (1.0 + std::sqrt(5.0)) / 2.0;
+    
+    std::vector<Point3df> initialPoints;
+    
+    Point3df pt;
+    pt << -1, t, 0;
+    normalize(pt);
+    initialPoints.push_back(pt);
+    pt << 1, t, 0;
+    normalize(pt);
+    initialPoints.push_back(pt);
+    pt << -1, -t, 0;
+    normalize(pt);
+    initialPoints.push_back(pt);
+    pt << 1, -t, 0;
+    normalize(pt);
+    initialPoints.push_back(pt);
+    pt << 0, -1, t;
+    normalize(pt);
+    initialPoints.push_back(pt);
+    pt << 0, 1, t;
+    normalize(pt);
+    initialPoints.push_back(pt);
+    pt << 0, -1, -t;
+    normalize(pt);
+    initialPoints.push_back(pt);
+    pt << 0, 1, -t;
+    normalize(pt);
+    initialPoints.push_back(pt);
+    pt << t, 0, -1;
+    normalize(pt);
+    initialPoints.push_back(pt);
+    pt << t, 0, 1;
+    normalize(pt);
+    initialPoints.push_back(pt);
+    pt << -t, 0, -1;
+    normalize(pt);
+    initialPoints.push_back(pt);
+    pt << -t, 0, 1;
+    normalize(pt);
+    initialPoints.push_back(pt);
+    
+    list.push_back(TriPoints(initialPoints[0], initialPoints[11], initialPoints[15]));
+    list.push_back(TriPoints(initialPoints[0], initialPoints[5], initialPoints[1]));
+    list.push_back(TriPoints(initialPoints[0], initialPoints[1], initialPoints[7]));
+    list.push_back(TriPoints(initialPoints[0], initialPoints[7], initialPoints[10]));
+    list.push_back(TriPoints(initialPoints[0], initialPoints[10], initialPoints[11]));
+
+    list.push_back(TriPoints(initialPoints[1], initialPoints[5], initialPoints[9]));
+    list.push_back(TriPoints(initialPoints[5], initialPoints[11], initialPoints[4]));
+    list.push_back(TriPoints(initialPoints[11], initialPoints[10], initialPoints[2]));
+    list.push_back(TriPoints(initialPoints[10], initialPoints[7], initialPoints[6]));
+    list.push_back(TriPoints(initialPoints[7], initialPoints[1], initialPoints[8]));
+
+    list.push_back(TriPoints(initialPoints[3], initialPoints[9], initialPoints[4]));
+    list.push_back(TriPoints(initialPoints[3], initialPoints[4], initialPoints[2]));
+    list.push_back(TriPoints(initialPoints[3], initialPoints[2], initialPoints[6]));
+    list.push_back(TriPoints(initialPoints[3], initialPoints[6], initialPoints[8]));
+    list.push_back(TriPoints(initialPoints[3], initialPoints[8], initialPoints[9]));
+
+    list.push_back(TriPoints(initialPoints[4], initialPoints[9], initialPoints[5]));
+    list.push_back(TriPoints(initialPoints[2], initialPoints[4], initialPoints[11]));
+    list.push_back(TriPoints(initialPoints[6], initialPoints[2], initialPoints[10]));
+    list.push_back(TriPoints(initialPoints[8], initialPoints[6], initialPoints[7]));
+    list.push_back(TriPoints(initialPoints[9], initialPoints[8], initialPoints[1]));
+
+    return list;
+  }
+  
+  void Sphere::refine(std::list<Primitive::TriPoints>& list)
+  {
+    std::list<Primitive::TriPoints> newlist;
+    
+    for(auto it = list.begin(); it != list.end(); ++it)
+    {
+      auto middle0 = middlePoint(it->p0, it->p1);
+      auto middle1 = middlePoint(it->p1, it->p2);
+      auto middle2 = middlePoint(it->p2, it->p0);
+      newlist.push_back(TriPoints(it->p0, middle0, middle2));
+      newlist.push_back(TriPoints(it->p1, middle1, middle0));
+      newlist.push_back(TriPoints(it->p2, middle2, middle1));
+      newlist.push_back(TriPoints(middle0, middle1, middle2));
+    }
+    
+    list.swap(newlist);
+  }
+  
+  void Sphere::generateTriangles(std::list<Primitive::TriPoints>& list)
+  {
+    for(auto it = list.begin(); it != list.end(); ++it)
+    {
+      triangles.push_back(new Triangle(it->p0 * radius + center, it->p1 * radius + center, it->p2 * radius + center));
+    }
+  }
+
+  Point3df Sphere::middlePoint(const Point3df& p1, const Point3df& p2)
+  {
+    Point3df middle = (p1 + p2) / 2;
+    normalize(middle);
+    return middle;
   }
   
   Box::Box(const Point3df& corner1, const Point3df& corner2) :

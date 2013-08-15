@@ -205,13 +205,13 @@ class ParserDat(object):
         sphere.setColor(self.textures[object['TEXTURE']]['COLOR'])
         sphere.setReflection(self.textures[object['TEXTURE']]['SPECULAR'])
         sphere.setDiffuse(self.textures[object['TEXTURE']]['DIFFUSE'])
-        scene.addPrimitive(sphere)
+        sphere.addToScene(scene)
       if object['type'] == 'TRI':
         triangle = IRT.Triangle(object['V0'], object['V1'], object['V2'])
         triangle.setColor(self.textures[object['TEXTURE']]['COLOR'])
         triangle.setReflection(self.textures[object['TEXTURE']]['SPECULAR'])
         triangle.setDiffuse(self.textures[object['TEXTURE']]['DIFFUSE'])
-        scene.addPrimitive(triangle)
+        scene.addTriangle(triangle)
 
   def create(self, Raytracer, scene):
     raytracer = Raytracer(*self.raytracer_params['RESOLUTION'])
