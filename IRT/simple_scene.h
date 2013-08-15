@@ -123,6 +123,13 @@ namespace IRT
      * @throw std::out_of_range if the primitive was already added
      */
     _export_tools unsigned long addPrimitive(Primitive* primitive);
+    /**
+     * Adds several new primitive to the scene
+     * @param primitives is the primitives to add
+     * @return the indices of the primitives
+     * @throw std::out_of_range if a primitive was already added
+     */
+    _export_tools std::vector<unsigned long> addPrimitives(const std::vector<IRT::Primitive*>& primitives);
 
     /**
      * Returns the index of the given primitive

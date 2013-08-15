@@ -131,6 +131,18 @@ namespace IRT
     return primitives.size() - 1;
   }
 
+  std::vector<unsigned long> SimpleScene::addPrimitives(const std::vector<IRT::Primitive*>& primitives)
+  {
+    std::vector<unsigned long> indices;
+    
+    for(auto it = primitives.begin(); it != primitives.end(); ++it)
+    {
+      indices.push_back(addPrimitive(*it));
+    }
+
+    return indices;
+  }
+
   unsigned long SimpleScene::getPrimitiveIndex(Primitive* primitive)
   {
     std::vector<Primitive*>::const_iterator it;
