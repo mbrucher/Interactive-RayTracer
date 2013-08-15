@@ -40,7 +40,7 @@ namespace IRT
       {
         long digit = index % base;
         h = h + digit * fac;
-        index = (index - digit) * inv;
+        index = static_cast<long>((index - digit) * inv);
         fac = fac * inv;
       }
       return h;

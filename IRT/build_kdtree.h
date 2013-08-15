@@ -29,14 +29,14 @@ namespace IRT
     static void automatic_build(IRT::SimpleScene* scene)
     {
       // Using Havran's values
-      DataType k1 = 1.2;
-      DataType k2 = 2.0;
-      DataType K1 = 1.;
-      DataType K2 = .2;
+      DataType k1 = 1.2f;
+      DataType k2 = 2.0f;
+      DataType K1 = 1.f;
+      DataType K2 = .2f;
 
       int remaining_depth = static_cast<int>(std::ceil(k1 * std::log(static_cast<DataType>(scene->getPrimitives().size())) + k2));
       int remaining_failures = static_cast<int>(std::ceil(K1 + remaining_depth * K2));
-      DataType enhancement_ratio_failure = .75;
+      DataType enhancement_ratio_failure = .75f;
 
       custom_build(scene, remaining_depth, remaining_failures, enhancement_ratio_failure);
     }
@@ -46,7 +46,7 @@ namespace IRT
       const std::set<std::pair<int, DataType> >& split_positions = getSplitPositions(node, bb);
 
       DataType lowest_cost = std::numeric_limits<DataType>::max();
-      std::pair<int, DataType> lowest_split = std::make_pair(-1, 0.);
+      std::pair<int, DataType> lowest_split = std::make_pair(-1, 0.f);
       std::vector<Primitive*> right_primitives, left_primitives;
 
       for(std::set<std::pair<int, DataType> >::const_iterator it = split_positions.begin(); it != split_positions.end(); ++it)

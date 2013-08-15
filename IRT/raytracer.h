@@ -33,7 +33,7 @@ namespace IRT
      * @param y is the ordinate of the point
      * @param ray is a new ray passing through the point
      */
-    void generateRay(float x, float y, Ray& ray) const
+    void generateRay(DataType x, DataType y, Ray& ray) const
     {
       ray.direction() = direction + orientation_u * (x - precompWidth) + orientation_v * (precompHeight - y);
 
@@ -80,8 +80,8 @@ namespace IRT
     /// Updates the parameters of the raytracer
     void updateParameters()
     {
-      precompWidth = pixelWidth / 2;
-      precompHeight = pixelHeight / 2;
+      precompWidth = static_cast<DataType>(pixelWidth) / 2;
+      precompHeight = static_cast<DataType>(pixelHeight) / 2;
 
       normalize(orientation_v);
       orientation_u = orientation_v.cross(direction);
@@ -232,7 +232,7 @@ namespace IRT
         {
           for(unsigned int i = 0; i < pixelWidth; ++i)
           {
-            generateRay(i, j, ray);
+            generateRay(static_cast<DataType>(i), static_cast<DataType>(j), ray);
             if(mustShoot(ray, bb))
             {
               hitLevel(ray, screen[j * pixelWidth + i]);
@@ -245,7 +245,7 @@ namespace IRT
         {
           for(unsigned int i = 0; i < pixelWidth; ++i)
           {
-            generateRay(i, j, ray);
+            generateRay(static_cast<DataType>(i), static_cast<DataType>(j), ray);
             if(mustShoot(ray, bb))
             {
               hitDistance(ray, screen[j * pixelWidth + i]);
