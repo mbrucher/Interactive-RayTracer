@@ -57,13 +57,13 @@ namespace IRT
       if(primitive == NULL)
         return;
 
-      MaterialPoint caracteristics;
-      primitive->computeColorNormal(ray, dist, caracteristics);
-      color = scene->computeColor(ray.origin() + dist * ray.direction(), caracteristics, primitive);
+      MaterialPoint characteristics;
+      primitive->computeColorNormal(ray, dist, characteristics);
+      color = scene->computeColor(ray.origin() + dist * ray.direction(), characteristics, primitive);
 
       if(level < levels)
       {
-        Ray ray_sec(ray.origin() + dist * ray.direction(), ray.direction() - (ray.direction().dot(caracteristics.normal)) * 2 * caracteristics.normal);
+        Ray ray_sec(ray.origin() + dist * ray.direction(), ray.direction() - (ray.direction().dot(characteristics.normal)) * 2 * characteristics.normal);
         normalize(ray_sec.direction());
         Color color_sec = Color::Zero();
         computeColor(ray_sec, color_sec, level+1);

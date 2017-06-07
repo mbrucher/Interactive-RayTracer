@@ -103,10 +103,10 @@ namespace IRT
     /**
      * Computes the color
      * @param center is the point where the light will hit the primitive
-     * @param caracteristics is the caracteristics to the primitive
+     * @param characteristics is the characteristics to the primitive
      * @return the actual color of the point
      */
-    const Color computeColor(const Point3df& center, const MaterialPoint& caracteristics, const Primitive* primitive);
+    const Color computeColor(const Point3df& center, const MaterialPoint& characteristics, const Primitive* primitive);
 
     /**
      * Tests if a ray collides with objects in the scene

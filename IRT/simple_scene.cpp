@@ -92,7 +92,7 @@ namespace IRT
     return dist;
   }
 
-  const Color SimpleScene::computeColor(const Point3df& center, const MaterialPoint& caracteristics, const Primitive* primitive)
+  const Color SimpleScene::computeColor(const Point3df& center, const MaterialPoint& characteristics, const Primitive* primitive)
   {
     Color t_color(Color::Zero());
     for(std::vector<Light*>::const_iterator it = lights.begin(); it != lights.end(); ++it)
@@ -104,7 +104,7 @@ namespace IRT
       if(testCollision(ray, pathSize))
         continue;
 
-      float cosphi = path.dot(caracteristics.normal) * primitive->getDiffuse();
+      float cosphi = path.dot(characteristics.normal) * primitive->getDiffuse();
       if(cosphi < 0.)
         continue;
       t_color += (primitive->getColor() * cosphi).cwiseProduct((*it)->computeColor(ray, pathSize));
