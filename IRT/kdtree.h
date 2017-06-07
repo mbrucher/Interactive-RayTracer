@@ -35,7 +35,7 @@ namespace IRT
       KDTreeNode* left;
     public:
       KDTreeNode()
-      : is_leaf(true), primitives(NULL), left(NULL)
+      : is_leaf(true), primitives(nullptr), left(nullptr)
       {
       }
 
@@ -92,7 +92,7 @@ namespace IRT
       Primitive* getFirstCollision(const Ray& ray, float& dist) const
       {
         float min_dist = std::numeric_limits<float>::max();
-        Primitive* min_primitive = NULL;
+        Primitive* min_primitive = nullptr;
 
         for(typename std::vector<Primitive*>::const_iterator it = getPrimitives()->begin(); it != getPrimitives()->end(); ++it)
         {
@@ -242,7 +242,7 @@ namespace IRT
       }
       Return defaultReturn()
       {
-        return NULL;
+        return nullptr;
       }
 
       void update()
@@ -321,10 +321,10 @@ namespace IRT
       }
       stack[exitpoint].t = tfar;
       stack[exitpoint].pb = ray.origin() + ray.direction() * tfar;
-      stack[exitpoint].node = NULL;
+      stack[exitpoint].node = nullptr;
       traversal.updateTo(stack[entrypoint]);
 
-      while(current_node != NULL)
+      while(current_node != nullptr)
       {
         while(!current_node->isLeaf())
         {
@@ -332,7 +332,7 @@ namespace IRT
         }
 
         Primitive* primitive = current_node->getFirstCollision(ray, dist);
-        if(primitive != NULL && dist <= stack[exitpoint].t)
+        if(primitive != nullptr && dist <= stack[exitpoint].t)
         {
           return traversal.returnFrom(primitive);
         }

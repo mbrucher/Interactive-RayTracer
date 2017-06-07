@@ -54,7 +54,7 @@ namespace IRT
 
       DataType dist;
       Primitive* primitive = scene->getFirstCollision(ray, dist, tnear, tfar);
-      if(primitive == NULL)
+      if(primitive == nullptr)
         return;
 
       MaterialPoint characteristics;

@@ -115,7 +115,7 @@ namespace IRT
 
   bool SimpleScene::testCollision(const Ray& ray, float dist)
   {
-    return (tree.getFirstCollision<KDTree<Primitive>::DefaultTraversal>(ray, dist, 0, dist) != NULL);
+    return (tree.getFirstCollision<KDTree<Primitive>::DefaultTraversal>(ray, dist, 0, dist) != nullptr);
   }
 
   unsigned long SimpleScene::addPrimitive(Primitive* primitive)

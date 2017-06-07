@@ -211,7 +211,7 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_getFirstCollision )
   float tnear = 0; float tfar = std::numeric_limits<float>::max();
   BOOST_CHECK_EQUAL(primitive, scene->getFirstCollision(Ray(Vector3df::Constant(-5.), Vector3df::Constant(1.)), dist, tnear, tfar));
   BOOST_CHECK_GT(dist, 0);
-  BOOST_CHECK_EQUAL(scene->getFirstCollision(Ray(Vector3df::Constant(-5.), Vector3df::Constant(-1.)), dist, tnear, tfar), static_cast<Primitive*>(NULL));
+  BOOST_CHECK_EQUAL(scene->getFirstCollision(Ray(Vector3df::Constant(-5.), Vector3df::Constant(-1.)), dist, tnear, tfar), static_cast<Primitive*>(nullptr));
 
   delete scene;
 }
