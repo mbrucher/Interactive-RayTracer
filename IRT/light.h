@@ -12,7 +12,7 @@
 namespace IRT
 {
   /// Class for lights
-  class Light
+  class _export_tools Light
   {
   private:
     /// Center of the light
@@ -25,7 +25,7 @@ namespace IRT
      * @param center is the center of the light
      * @param color is the color of the light
      */
-    _export_tools Light(const Vector3df& center, const Color& color);
+    Light(const Vector3df& center, const Color& color);
 
     /// destructor
     ~Light()
@@ -35,12 +35,12 @@ namespace IRT
      * Returns the color of the light
      * @return a color
      */
-    _export_tools Color computeColor(const Ray& ray, float dist) const;
+    Color computeColor(const Ray& ray, float dist) const;
 
     /**
-     * Resturns the center of the light
+     * Returns the center of the light
      */
-    _export_tools const Vector3df& getCenter() const;
+    const Vector3df& getCenter() const;
   };
 }
 
