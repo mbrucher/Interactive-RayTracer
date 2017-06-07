@@ -4,6 +4,8 @@
  */
 
 #include <limits>
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_NO_MAIN
 #include <boost/test/unit_test.hpp>
 
 #include "../IRT/simple_scene.h"
@@ -139,7 +141,7 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_removePrimitive )
 
 BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_addLight )
 {
-  Light* light = new Light(Vector3df::Zero(), Vector3df(1.));
+  Light* light = new Light(Vector3df::Zero(), Vector3df::Constant(1.f));
   SimpleScene* scene = new SimpleScene;
 
   BOOST_CHECK_NO_THROW(scene->addLight(light));
@@ -150,7 +152,7 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_addLight )
 
 BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_getLight )
 {
-  Light* light = new Light(Vector3df::Zero(), Vector3df(1.));
+  Light* light = new Light(Vector3df::Zero(), Vector3df::Constant(1.f));
   SimpleScene* scene = new SimpleScene;
 
   unsigned long index = 0;
@@ -167,7 +169,7 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_getLight )
 
 BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_getLightIndex )
 {
-  Light* light = new Light(Vector3df::Zero(), Vector3df(1.));
+  Light* light = new Light(Vector3df::Zero(), Vector3df::Constant(1.f));
   SimpleScene* scene = new SimpleScene;
 
   unsigned long index = 0;
@@ -179,7 +181,7 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_getLightIndex )
 
 BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_removeLight )
 {
-  Light* light = new Light(Vector3df::Zero(), Vector3df(1.));
+  Light* light = new Light(Vector3df::Zero(), Vector3df::Constant(1.f));
   SimpleScene* scene = new SimpleScene;
 
   unsigned long index = 0;
@@ -188,7 +190,7 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_removeLight )
   Light* result = scene->removeLight(index);
 
   BOOST_REQUIRE_EQUAL(light, result);
-  Light* light2 = new Light(Vector3df::Zero(), Vector3df(1.));
+  Light* light2 = new Light(Vector3df::Zero(), Vector3df::Constant(1.f));
   scene->addLight(light2);
   BOOST_REQUIRE_NE(scene->getLight(index), light);
 
@@ -216,7 +218,7 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_getFirstCollision )
 
 BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_testCollision )
 {
-  Primitive* primitive = new Sphere(Vector3df(0.), 3.f);
+  Primitive* primitive = new Sphere(Vector3df::Zero(), 3.f);
   SimpleScene* scene = new SimpleScene;
   IRT::BuildKDTree::automatic_build(scene);
 

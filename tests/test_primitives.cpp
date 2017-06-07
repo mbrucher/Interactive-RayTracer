@@ -3,6 +3,8 @@
  * Primitives file for the test suit
  */
 
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_NO_MAIN
 #include <boost/test/unit_test.hpp>
 
 #include "../IRT/primitives.h"
