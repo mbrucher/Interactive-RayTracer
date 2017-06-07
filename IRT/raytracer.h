@@ -10,10 +10,6 @@
 #include <tbb/tbb.h>
 #endif
 
-#ifdef USE_ANNOTATE
-#include "annotate.h"
-#endif
-
 #include "common.h"
 #include "ray.h"
 #include "bounding_box.h"
@@ -190,71 +186,19 @@ namespace IRT
     {
       Ray ray(origin, direction);
       const BoundingBox& bb = scene->getBoundingBox();
-#ifdef USE_ANNOTATE
-      ANNOTATE_SITE_BEGIN( draw_scene )
-#endif
       for(unsigned int j = 0; j < pixelHeight; ++j)
       {
         for(unsigned int i = 0; i < pixelWidth; ++i)
         {
-#ifdef USE_ANNOTATE
-          ANNOTATE_TASK_BEGIN( ray )
-#endif
           Color final_color = sampler.computeColor(this, bb, ray, i, j);
 
           for(unsigned int k = 0; k < nbColors; ++k)
               screen[nbColors * (j * pixelWidth + i) + k] = final_color(k);
-#ifdef USE_ANNOTATE
-          ANNOTATE_TASK_END( ray )
-#endif
         }
       }
-#ifdef USE_ANNOTATE
-      ANNOTATE_SITE_END( draw_scene )
-#endif
     }
 #endif
 
-    /**
-     * @brief checkDraw allows to display some information of how the raytracer works
-     * @param screen is the screen where everything will be drawn
-     * @param type is 0 to get kd-tree hit level, 1 to check distance
-     */
-    void checkDraw(int* screen, long type)
-    {
-      Ray ray(origin, direction);
-      const BoundingBox& bb = scene->getBoundingBox();
-      
-      switch(type)
-      {
-      case 0:
-        for(unsigned int j = 0; j < pixelHeight; ++j)
-        {
-          for(unsigned int i = 0; i < pixelWidth; ++i)
-          {
-            generateRay(static_cast<DataType>(i), static_cast<DataType>(j), ray);
-            if(mustShoot(ray, bb))
-            {
-              hitLevel(ray, screen[j * pixelWidth + i]);
-            }
-          }
-        }
-        break;
-      case 1:
-        for(unsigned int j = 0; j < pixelHeight; ++j)
-        {
-          for(unsigned int i = 0; i < pixelWidth; ++i)
-          {
-            generateRay(static_cast<DataType>(i), static_cast<DataType>(j), ray);
-            if(mustShoot(ray, bb))
-            {
-              hitDistance(ray, screen[j * pixelWidth + i]);
-            }
-          }
-        }
-      }
-    }
-    
     /**
      * Sets the size of the screen
      * @param width is the width of the screen

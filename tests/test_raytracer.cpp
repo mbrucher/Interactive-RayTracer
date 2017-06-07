@@ -3,6 +3,8 @@
  * Light file for the test suit
  */
 
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_NO_MAIN
 #include <boost/test/unit_test.hpp>
 
 #include "../IRT/simple_scene.h"
@@ -63,7 +65,7 @@ BOOST_AUTO_TEST_CASE( test_IRT_Raytracer_setViewer )
   SimpleScene* scene = new SimpleScene;
 
   raytracer->setScene(scene);
-  raytracer->setViewer(Point3df(0.), Vector3df(1.));
+  raytracer->setViewer(Point3df::Constant(0), Vector3df::Constant(1));
 
   delete raytracer;
   delete scene;
@@ -75,7 +77,7 @@ BOOST_AUTO_TEST_CASE( test_IRT_Raytracer_setOrientation )
   SimpleScene* scene = new SimpleScene;
 
   raytracer->setScene(scene);
-  Vector3df vector(0.);
+  Vector3df vector = Vector3df::Constant(0.);
   vector(1) = 1.;
   raytracer->setOrientation(vector);
 
@@ -90,8 +92,8 @@ BOOST_AUTO_TEST_CASE( test_IRT_Raytracer_draw )
 
   raytracer->setScene(scene);
   raytracer->setSize(6.4, 4.8);
-  raytracer->setViewer(Point3df(0.), Vector3df(1.));
-  Vector3df vector(0.);
+  raytracer->setViewer(Point3df::Constant(0.), Vector3df::Constant(1.));
+  Vector3df vector = Vector3df::Constant(0.);
   vector(1) = 1.;
   raytracer->setOrientation(vector);
 
