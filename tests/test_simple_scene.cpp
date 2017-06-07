@@ -248,8 +248,6 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_computeColor )
   material.normal.normalize();
 
   BOOST_CHECK((scene->computeColor(Vector3df::Constant(4.), material, primitive) != Normal3df::Constant(0.f)));
-  std::cout << scene->computeColor(Vector3df::Constant(4.), material, primitive) << std::endl;
-  std::cout << scene->computeColor(Vector3df::Constant(-4.), material, primitive) << std::endl;
   BOOST_CHECK((scene->computeColor(Vector3df::Constant(-4.), material, primitive) == Normal3df::Constant(0.f)));
 
   delete scene;
