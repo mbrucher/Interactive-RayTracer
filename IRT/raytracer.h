@@ -212,6 +212,11 @@ namespace IRT
       updateParameters();
     }
 
+    std::pair<float, float> getSize() const
+    {
+      return std::make_pair(width, height);
+    }
+
     /**
      * Sets the position of the viewer and its line of sight
      * @param origin is the origin of the point
@@ -225,6 +230,11 @@ namespace IRT
       updateParameters();
     }
 
+    std::pair<Point3df, Vector3df> getViewer() const
+    {
+      return std::make_pair(origin, direction);
+    }
+
     /**
      * Sets the orientation of the screen
      * @param orientation is the vertical orientation of the screen
@@ -234,6 +244,11 @@ namespace IRT
       this->orientation_v = orientation;
 
       updateParameters();
+    }
+
+    Vector3df getOrientation() const
+    {
+      return orientation_v;
     }
 
     /**
@@ -260,6 +275,11 @@ namespace IRT
     void setScene(SimpleScene* scene)
     {
       this->scene = scene;
+    }
+
+    SimpleScene* getScene() const
+    {
+      return scene;
     }
 
     /**

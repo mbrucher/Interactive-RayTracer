@@ -6,6 +6,8 @@
 #ifndef PRIMITIVES
 #define PRIMITIVES
 
+#include <memory>
+
 #include "common.h"
 #include "ray.h"
 #include "bounding_box.h"
@@ -74,6 +76,9 @@ namespace IRT
     void setDiffuse(float diffuse);
 
     float getDiffuse() const;
+
+    virtual std::unique_ptr<Primitive> clone() const = 0;
+
   protected:
     /// Color of the sphere
     Color color;
@@ -118,6 +123,9 @@ namespace IRT
      * @return the bounding box
      */
     virtual BoundingBox getBoundingBox() const override;
+
+    virtual std::unique_ptr<Primitive> clone() const override;
+
   private:
     /// Center of the sphere
     Point3df center;
@@ -160,6 +168,8 @@ namespace IRT
      * @return the bounding box
      */
     virtual BoundingBox getBoundingBox() const override;
+
+    virtual std::unique_ptr<Primitive> clone() const override;
   private:
     /// First corner
     Point3df corner1;
@@ -203,6 +213,8 @@ namespace IRT
      * @return the bounding box
      */
     virtual BoundingBox getBoundingBox() const override;
+
+    virtual std::unique_ptr<Primitive> clone() const override;
   private:
     /// First corner
     Point3df corner1;

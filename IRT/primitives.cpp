@@ -89,6 +89,11 @@ namespace IRT
     return bb;
   }
   
+  std::unique_ptr<Primitive> Sphere::clone() const
+  {
+    return std::unique_ptr<Primitive>(new Sphere(*this));
+  }
+
   Box::Box(const Point3df& corner1, const Point3df& corner2) :
   corner1(corner1), corner2(corner2)
   {
@@ -143,6 +148,11 @@ namespace IRT
     return bb;
   }
   
+  std::unique_ptr<Primitive> Box::clone() const
+  {
+    return std::unique_ptr<Primitive>(new Box(*this));
+  }
+
   Triangle::Triangle(const Point3df& corner1, const Point3df& corner2, const Point3df& corner3) :
   corner1(corner1), corner2(corner2), corner3(corner3), v0(corner3 - corner1), v1(corner2 - corner1), normal(v1.cross(v0))
   {
@@ -196,4 +206,10 @@ namespace IRT
     
     return bb;
   }
+
+  std::unique_ptr<Primitive> Triangle::clone() const
+  {
+    return std::unique_ptr<Primitive>(new Triangle(*this));
+  }
+
 }

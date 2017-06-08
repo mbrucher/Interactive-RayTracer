@@ -12,4 +12,4 @@ enable_testing()
 
 add_subdirectory(IRT)
 add_subdirectory(tests)
-
+add_subdirectory(Python)
