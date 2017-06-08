@@ -6,6 +6,7 @@
 #ifndef SIMPLESCENE
 #define SIMPLESCENE
 
+#include <memory>
 #include <vector>
 
 #include "common.h"
@@ -24,11 +25,11 @@ namespace IRT
   {
   private:
     /// Array for the primitives
-    std::vector<Primitive*> primitives;
+    std::vector<std::unique_ptr<Primitive>> primitives;
     /// KD-tree
     KDTree<Primitive> tree;
     /// Array for the lights
-    std::vector<Light*> lights;
+    std::vector<std::unique_ptr<Light>> lights;
     
     BoundingBox bb;
 
@@ -38,6 +39,9 @@ namespace IRT
 
     /// Destructor
     ~SimpleScene();
+
+    SimpleScene(const SimpleScene&) = delete;
+    SimpleScene& operator=(const SimpleScene&) = delete;
 
     /**
      * Returns a primitive
@@ -62,7 +66,7 @@ namespace IRT
      * @param index is the index of the primitive to get
      * @return the asked primitive
      */
-    Primitive* removePrimitive(unsigned long index);
+    std::unique_ptr<Primitive> removePrimitive(unsigned long index);
 
     /**
      * Returns a light
@@ -76,7 +80,7 @@ namespace IRT
      * @param index is the index of the light to get
      * @return the asked light
      */
-    Light* removeLight(unsigned long index);
+    std::unique_ptr<Light> removeLight(unsigned long index);
 
     /**
      * Returns the index of the first primitive that is hit by the ray
@@ -122,7 +126,7 @@ namespace IRT
      * @return the index of the primitive
      * @throw std::out_of_range if the primitive was already added
      */
-    unsigned long addPrimitive(Primitive* primitive);
+    unsigned long addPrimitive(std::unique_ptr<Primitive> primitive);
 
     /**
      * Returns the index of the given primitive
@@ -137,7 +141,7 @@ namespace IRT
      * @return True if the light was added, False if not
      * @throw std::out_of_range if the light was already added
      */
-    unsigned long addLight(Light* light);
+    unsigned long addLight(std::unique_ptr<Light> light);
 
     /**
      * Returns the index of the given light
@@ -151,7 +155,7 @@ namespace IRT
      * Returns the whole primitives vector
      * @return the primitives
      */
-    const std::vector<Primitive*>& getPrimitives() const;
+    std::vector<Primitive*> getPrimitives() const;
     
     /**
      * Returns the kd-tree

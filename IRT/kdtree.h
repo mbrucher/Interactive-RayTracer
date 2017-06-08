@@ -94,14 +94,14 @@ namespace IRT
         float min_dist = std::numeric_limits<float>::max();
         Primitive* min_primitive = nullptr;
 
-        for(typename std::vector<Primitive*>::const_iterator it = getPrimitives()->begin(); it != getPrimitives()->end(); ++it)
+        for(auto primitive: *getPrimitives())
         {
           float cur_dist;
-          bool test = (*it)->intersect(ray, cur_dist);
+          bool test = primitive->intersect(ray, cur_dist);
 
           if(test && (0.0001f < cur_dist) && (cur_dist < min_dist))
           {
-            min_primitive = *it;
+            min_primitive = primitive;
             dist = cur_dist;
           }
         }
@@ -192,10 +192,10 @@ namespace IRT
       this->primitives = primitives;
       KDTreeNode node;
       node.setLeaf(true);
-      node.setPrimitives(&primitives);
+      node.setPrimitives(&this->primitives);
 
       nodes.clear();
-      nodes.reserve(3 * primitives.size());
+      nodes.reserve(3 * this->primitives.size());
       nodes.push_back(node);
       nodes_primitives.clear();
     }

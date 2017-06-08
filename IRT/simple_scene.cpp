@@ -22,22 +22,18 @@ namespace IRT
 
   SimpleScene::~SimpleScene()
   {
-    for(std::vector<Primitive*>::const_iterator it = primitives.begin(); it != primitives.end(); ++it)
-      delete *it;
-    for(std::vector<Light*>::const_iterator it = lights.begin(); it != lights.end(); ++it)
-      delete *it;
   }
 
   Primitive* SimpleScene::getPrimitive(unsigned long index)
   {
-    return primitives[index];
+    return primitives[index].get();
   }
 
-  Primitive* SimpleScene::removePrimitive(unsigned long index)
+  std::unique_ptr<Primitive> SimpleScene::removePrimitive(unsigned long index)
   {
-    std::vector<Primitive*>::iterator it = primitives.begin();
+    auto it = primitives.begin();
     std::advance(it, index);
-    Primitive* primitive = *it;
+    auto primitive = std::move(*it);
     primitives.erase(it);
     return primitive;
   }
@@ -49,7 +45,7 @@ namespace IRT
 
   void SimpleScene::computeBoundingBox()
   {
-    std::vector<Primitive*>::iterator it = primitives.begin();
+    auto it = primitives.begin();
     bb = (*it)->getBoundingBox();
 
     for(++it; it != primitives.end(); ++it)
@@ -62,14 +58,14 @@ namespace IRT
 
   Light* SimpleScene::getLight(unsigned long index)
   {
-    return lights[index];
+    return lights[index].get();
   }
 
-  Light* SimpleScene::removeLight(unsigned long index)
+  std::unique_ptr<Light> SimpleScene::removeLight(unsigned long index)
   {
-    std::vector<Light*>::iterator it = lights.begin();
+    auto it = lights.begin();
     std::advance(it, index);
-    Light* light = *it;
+    auto light = std::move(*it);
     lights.erase(it);
     return light;
   }
@@ -95,9 +91,9 @@ namespace IRT
   const Color SimpleScene::computeColor(const Point3df& center, const MaterialPoint& characteristics, const Primitive* primitive)
   {
     Color t_color(Color::Zero());
-    for(std::vector<Light*>::const_iterator it = lights.begin(); it != lights.end(); ++it)
+    for(auto& light: lights)
     {
-      Vector3df path = (*it)->getCenter() - center;
+      Vector3df path = light->getCenter() - center;
       float pathSize = std::sqrt(norm2(path));
       path = path.cwiseProduct(Vector3df::Constant(1/pathSize));
       Ray ray(center, path);
@@ -107,7 +103,7 @@ namespace IRT
       float cosphi = path.dot(characteristics.normal) * primitive->getDiffuse();
       if(cosphi < 0.)
         continue;
-      t_color += (primitive->getColor() * cosphi).cwiseProduct((*it)->computeColor(ray, pathSize));
+      t_color += (primitive->getColor() * cosphi).cwiseProduct(light->computeColor(ray, pathSize));
     }
 
     return t_color;
@@ -118,49 +114,46 @@ namespace IRT
     return (tree.getFirstCollision<KDTree<Primitive>::DefaultTraversal>(ray, dist, 0, dist) != nullptr);
   }
 
-  unsigned long SimpleScene::addPrimitive(Primitive* primitive)
+  unsigned long SimpleScene::addPrimitive(std::unique_ptr<Primitive> primitive)
   {
-    if(std::find(primitives.begin(), primitives.end(), primitive) != primitives.end())
-      throw std::out_of_range("Primitive already added");
-
     BoundingBox primitive_bb = primitive->getBoundingBox();
     bb.corner1 = bb.corner1.array().min(primitive_bb.corner1.array());
     bb.corner2 = bb.corner2.array().max(primitive_bb.corner2.array());
 
-    primitives.push_back(primitive);
+    primitives.push_back(std::move(primitive));
     return primitives.size() - 1;
   }
 
   unsigned long SimpleScene::getPrimitiveIndex(Primitive* primitive)
   {
-    std::vector<Primitive*>::const_iterator it;
-    if((it = std::find(primitives.begin(), primitives.end(), primitive)) != primitives.end())
+    auto it = std::find_if(primitives.begin(), primitives.end(), [primitive](const auto& _primitive){return _primitive.get() == primitive; });
+    if(it != primitives.end())
       return it - primitives.begin();
 
     throw std::out_of_range("Primitive not found!");
   }
 
-  unsigned long SimpleScene::addLight(Light* light)
+  unsigned long SimpleScene::addLight(std::unique_ptr<Light> light)
   {
-    if(std::find(lights.begin(), lights.end(), light) != lights.end())
-      throw std::out_of_range("Light already added");
-
-    lights.push_back(light);
+    lights.push_back(std::move(light));
     return lights.size() - 1;
   }
 
   unsigned long SimpleScene::getLightIndex(Light* light)
   {
-    std::vector<Light*>::const_iterator it;
-    if((it = std::find(lights.begin(), lights.end(), light)) != lights.end())
+    auto it = std::find_if(lights.begin(), lights.end(), [light](const auto& _light) {return _light.get() == light; });
+    if (it != lights.end())
       return it - lights.begin();
 
     throw std::out_of_range("Light not found!");
   }
 
-  const std::vector<Primitive*>& SimpleScene::getPrimitives() const
+  std::vector<Primitive*> SimpleScene::getPrimitives() const
   {
-    return primitives;
+    std::vector<Primitive*> result;
+    for(auto& primitive: primitives)
+      result.push_back(primitive.get());
+    return result;
   }
 
   KDTree<Primitive>& SimpleScene::getKDTree()
