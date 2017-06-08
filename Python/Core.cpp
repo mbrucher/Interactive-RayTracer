@@ -31,7 +31,7 @@ namespace
     py::class_<Raytracer<Sampler>>(m, type)
       .def(py::init<unsigned long, unsigned long>())
       .def_property("size", &Raytracer<Sampler>::getSize,
-      [](Raytracer<Sampler>& instance, const py::array_t<float>& array)
+      [](Raytracer<Sampler>& instance, const py::array_t<DataType>& array)
       {
         instance.setSize(array.at(0), array.at(1));
       })
@@ -39,7 +39,7 @@ namespace
       [](const Raytracer<Sampler>& instance)
       {
         auto view = instance.getViewer();
-        return std::make_pair(py::array_t<float>(3, view.first.data()), py::array_t<float>(3, view.second.data()));
+        return std::make_pair(py::array_t<DataType>(3, view.first.data()), py::array_t<DataType>(3, view.second.data()));
       },
       [](Raytracer<Sampler>& instance, const std::pair<Point3df, Vector3df>& l)
       {
@@ -62,10 +62,10 @@ PYBIND11_PLUGIN(PythonIRT) {
   py::class_<Primitive>(m, "Primitive")
     .def_property("color", [](const Primitive& instance)
     {
-      return py::array_t<float>(3, instance.getColor().data());
+      return py::array_t<DataType>(3, instance.getColor().data());
     }
     ,
-    [](Primitive& instance, const py::array_t<float>& color)
+    [](Primitive& instance, const py::array_t<DataType>& color)
     {
       instance.setColor(Eigen::Map<const Point3df>(color.data()));
     })

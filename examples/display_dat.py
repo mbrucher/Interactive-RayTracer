@@ -202,28 +202,28 @@ class ParserDat(object):
     for object in self.objects:
       if object['type'] == 'SPHERE':
         sphere = IRT.Sphere(object['CENTER'], object['RAD'])
-        sphere.setColor(self.textures[object['TEXTURE']]['COLOR'])
-        sphere.setReflection(self.textures[object['TEXTURE']]['SPECULAR'])
-        sphere.setDiffuse(self.textures[object['TEXTURE']]['DIFFUSE'])
+        sphere.color = (self.textures[object['TEXTURE']]['COLOR'])
+        sphere.reflection = (self.textures[object['TEXTURE']]['SPECULAR'])
+        sphere.diffuse = (self.textures[object['TEXTURE']]['DIFFUSE'])
         scene.addPrimitive(sphere)
       if object['type'] == 'TRI':
         triangle = IRT.Triangle(object['V0'], object['V1'], object['V2'])
-        triangle.setColor(self.textures[object['TEXTURE']]['COLOR'])
-        triangle.setReflection(self.textures[object['TEXTURE']]['SPECULAR'])
-        triangle.setDiffuse(self.textures[object['TEXTURE']]['DIFFUSE'])
+        triangle.color = (self.textures[object['TEXTURE']]['COLOR'])
+        triangle.reflection = (self.textures[object['TEXTURE']]['SPECULAR'])
+        triangle.diffuse = (self.textures[object['TEXTURE']]['DIFFUSE'])
         scene.addPrimitive(triangle)
 
   def create(self, Raytracer, scene):
     raytracer = Raytracer(*self.raytracer_params['RESOLUTION'])
 
-    raytracer.setSize(self.raytracer_params['ZOOM'], self.raytracer_params['ZOOM'] * self.raytracer_params['ASPECTRATIO'])
-    raytracer.setViewer(self.raytracer_params['CENTER'], self.raytracer_params['VIEWDIR'])
-    raytracer.setOrientation(self.raytracer_params['UPDIR'])
+    raytracer.size = (self.raytracer_params['ZOOM'], self.raytracer_params['ZOOM'] * self.raytracer_params['ASPECTRATIO'])
+    raytracer.viewer = (self.raytracer_params['CENTER'], self.raytracer_params['VIEWDIR'])
+    raytracer.orientation = (self.raytracer_params['UPDIR'])
 
     if 'ANTIALIASING' in self.raytracer_params and self.raytracer_params['ANTIALIASING'] ==  1:
-      self.raytracer.setOversampling(4)
+      self.raytracer.oversampling = (4)
 
-    raytracer.setScene(scene)
+    raytracer.scene = (scene)
     #IRT.BuildKDTree.custom_build(scene, 0, 0, 0)
     IRT.BuildKDTree.automatic_build(scene)
     return raytracer
@@ -233,7 +233,7 @@ class ParserDat(object):
     screen = numpy.zeros((self.raytracer_params['RESOLUTION'][1], self.raytracer_params['RESOLUTION'][0], 3), dtype=numpy.float32)
     current = time.time()
     raytracer.draw(screen)
-    print "Elapsed %f" % (time.time() - current)
+    print("Elapsed %f" % (time.time() - current))
     return screen
   
   def create_hitlevel(self, raytracer):
@@ -241,7 +241,7 @@ class ParserDat(object):
     screen = numpy.zeros((self.raytracer_params['RESOLUTION'][1], self.raytracer_params['RESOLUTION'][0]), dtype=numpy.int32)
     current = time.time()
     raytracer.checkDraw(screen, 0)
-    print "Elapsed %f" % (time.time() - current)
+    print("Elapsed %f" % (time.time() - current))
     return screen
   
   def create_hitdistance(self, raytracer):
@@ -249,7 +249,7 @@ class ParserDat(object):
     screen = numpy.zeros((self.raytracer_params['RESOLUTION'][1], self.raytracer_params['RESOLUTION'][0]), dtype=numpy.int32)
     current = time.time()
     raytracer.checkDraw(screen, 1)
-    print "Elapsed %f" % (time.time() - current)
+    print("Elapsed %f" % (time.time() - current))
     return screen
 
 def parse_dat(file):

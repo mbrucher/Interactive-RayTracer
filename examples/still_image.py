@@ -7,7 +7,7 @@ import pylab
 import IRT
 
 s = sample.Sample()
-s.setRaytracer(IRT.Raytracer_Jittered)
+s.setRaytracer(IRT.Raytracer_Uniform)
 
 screen = numpy.zeros((600, 800, 3), dtype=numpy.float32)
 s(screen)

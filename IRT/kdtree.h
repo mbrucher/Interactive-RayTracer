@@ -207,7 +207,7 @@ namespace IRT
 
     KDTreeNode* getPairEmptyNodes()
     {
-      int size = nodes.size();
+      auto size = nodes.size();
 
       nodes.resize(size + 2);
 

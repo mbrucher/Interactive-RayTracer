@@ -64,7 +64,7 @@ class Sample(object):
     self.orientation = numpy.array((.0, .1, .0), dtype=numpy.float32)
     self.raytracer.orientation = (self.orientation)
 
-    self.raytracer.oversampling = (2)
+    self.raytracer.oversampling = (4)
     self.raytracer.levels = (3)
 
     self.raytracer.scene = (self.scene)
