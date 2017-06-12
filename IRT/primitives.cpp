@@ -14,7 +14,7 @@ namespace IRT
   }
 
   Primitive::Primitive()
-  : emission_color(Color::Zero()), diffuse_color(Color::Constant(1.f)), reflection(0)
+  : emission_color(Color::Zero()), diffuse_color(Color::Constant(1.f)), specular_color(Color::Zero()), shininess(0), reflection(0)
   {
   }
 
