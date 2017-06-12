@@ -120,7 +120,7 @@ namespace IRT
         t_color += (primitive->getDiffuseColor() * cosphi).cwiseProduct(light->computeColor(ray, pathSize));
       auto costheta = path.dot(characteristics.normal);
       if (costheta >= 0.)
-        t_color += (primitive->getDiffuseColor() * std::pow(costheta, primitive->getShininess())).cwiseProduct(light->computeColor(ray, pathSize));
+        t_color += (primitive->getSpecularColor() * std::pow(costheta, primitive->getShininess())).cwiseProduct(light->computeColor(ray, pathSize));
 
     }
 
