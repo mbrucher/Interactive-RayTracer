@@ -86,7 +86,7 @@ namespace IRT
       orientation_v *= height / pixelHeight;
     }
     
-    void hitLevel(const Ray& ray, int& level)
+    void hitLevel(const Ray& ray, int& level) const
     {
       DataType tnear;
       DataType tfar;
@@ -99,7 +99,7 @@ namespace IRT
       level = scene->getHitLevel(ray, tnear, tfar);
     }
     
-    void hitDistance(const Ray& ray, int& dist)
+    void hitDistance(const Ray& ray, int& dist) const
     {
       DataType tnear;
       DataType tfar;
@@ -198,6 +198,46 @@ namespace IRT
       }
     }
 #endif
+
+    /**
+    * @brief checkDraw allows to display some information of how the raytracer works
+    * @param screen is the screen where everything will be drawn
+    * @param type is 0 to get kd-tree hit level, 1 to check distance
+    */
+    void checkDraw(int* screen, long type) const
+    {
+      Ray ray(origin, direction);
+      const BoundingBox& bb = scene->getBoundingBox();
+
+      switch (type)
+      {
+      case 0:
+        for (unsigned int j = 0; j < pixelHeight; ++j)
+        {
+          for (unsigned int i = 0; i < pixelWidth; ++i)
+          {
+            generateRay(static_cast<DataType>(i), static_cast<DataType>(j), ray);
+            if (mustShoot(ray, bb))
+            {
+              hitLevel(ray, screen[j * pixelWidth + i]);
+            }
+          }
+        }
+        break;
+      case 1:
+        for (unsigned int j = 0; j < pixelHeight; ++j)
+        {
+          for (unsigned int i = 0; i < pixelWidth; ++i)
+          {
+            generateRay(static_cast<DataType>(i), static_cast<DataType>(j), ray);
+            if (mustShoot(ray, bb))
+            {
+              hitDistance(ray, screen[j * pixelWidth + i]);
+            }
+          }
+        }
+      }
+    }
 
     /**
      * Sets the size of the screen

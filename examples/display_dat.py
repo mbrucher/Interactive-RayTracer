@@ -219,10 +219,9 @@ class ParserDat(object):
     raytracer.orientation = (self.raytracer_params['UPDIR'])
 
     if 'ANTIALIASING' in self.raytracer_params and self.raytracer_params['ANTIALIASING'] ==  1:
-      self.raytracer.oversampling = (4)
+      raytracer.oversampling = (4)
 
     raytracer.scene = (scene)
-    #IRT.BuildKDTree.custom_build(scene, 0, 0, 0)
     IRT.BuildKDTree.automatic_build(scene)
     return raytracer
   

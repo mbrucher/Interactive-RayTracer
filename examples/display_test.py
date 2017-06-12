@@ -163,17 +163,14 @@ class ParserTest:
     raytracer = Raytracer(*self.raytracer_params['RESOLUTION'])
 
     up_size = np.tan(self.raytracer_params['FOVY'] / 2 * np.pi / 180)
-    raytracer.size = (up_size * self.raytracer_params['RESOLUTION'][0] / self.raytracer_params['RESOLUTION'][1], up_size)
+    raytracer.size = (2*up_size * self.raytracer_params['RESOLUTION'][0] / self.raytracer_params['RESOLUTION'][1], 2*up_size)
     raytracer.viewer = (self.raytracer_params['CENTER'], self.raytracer_params['CENTER'] - self.raytracer_params['EYE'])
     raytracer.orientation = (self.raytracer_params['UPDIR'])
-
-    if 'ANTIALIASING' in self.raytracer_params and self.raytracer_params['ANTIALIASING'] ==  1:
-      self.raytracer.oversampling = (4)
+    raytracer.oversampling = (4)
 
     scene.ambient_color = self.textures["AMBIENT"]
     
     raytracer.scene = (scene)
-    #IRT.BuildKDTree.custom_build(scene, 0, 0, 0)
     IRT.BuildKDTree.automatic_build(scene)
     return raytracer
 
@@ -185,6 +182,22 @@ class ParserTest:
     print("Elapsed %f" % (time.time() - current))
     return screen
     
+  def create_hitlevel(self, raytracer):
+    import time
+    screen = np.zeros((self.raytracer_params['RESOLUTION'][1], self.raytracer_params['RESOLUTION'][0]), dtype=np.int32)
+    current = time.time()
+    raytracer.checkDraw(screen, 0)
+    print("Elapsed %f" % (time.time() - current))
+    return screen
+  
+  def create_hitdistance(self, raytracer):
+    import time
+    screen = np.zeros((self.raytracer_params['RESOLUTION'][1], self.raytracer_params['RESOLUTION'][0]), dtype=np.int32)
+    current = time.time()
+    raytracer.checkDraw(screen, 1)
+    print("Elapsed %f" % (time.time() - current))
+    return screen
+
 def parse_test(file):
   scene = IRT.SimpleScene()
 
@@ -193,7 +206,7 @@ def parse_test(file):
   parser.populate(scene)
   raytracer = parser.create(IRT.Raytracer_Uniform, scene)
 
-  im = parser.create_image(raytracer)
+  im = parser.create_hitlevel(raytracer)
   return im
 if __name__ == "__main__":
   import sys

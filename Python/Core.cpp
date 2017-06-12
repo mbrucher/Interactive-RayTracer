@@ -52,7 +52,12 @@ namespace
       .def("draw", [](const Raytracer<Sampler>& instance, py::array_t<DataType>& array)
       {
         instance.draw(array.mutable_data());
+      })
+        .def("checkDraw", [](const Raytracer<Sampler>& instance, py::array_t<int>& array, int type)
+      {
+        instance.checkDraw(array.mutable_data(), type);
       });
+
   }
 }
 
