@@ -32,6 +32,8 @@ namespace IRT
     std::vector<std::unique_ptr<Light>> lights;
     
     BoundingBox bb;
+    /// Ambient color
+    Color ambient_color;
 
   public:
     /// Constructor
@@ -83,6 +85,14 @@ namespace IRT
     std::unique_ptr<Light> removeLight(unsigned long index);
 
     /**
+    * Sets the ambient color
+    * @param color is the color of the sphere
+    */
+    void setAmbientColor(const Color& color);
+
+    const Color& getAmbientColor() const;
+
+    /**
      * Returns the index of the first primitive that is hit by the ray
      * @param ray is the ray to test
      * @param dist is the distance to the primitive
@@ -110,7 +120,7 @@ namespace IRT
      * @param characteristics is the characteristics to the primitive
      * @return the actual color of the point
      */
-    const Color computeColor(const Point3df& center, const MaterialPoint& characteristics, const Primitive* primitive);
+    const Color computeColor(const Point3df& center, const Vector3df& direction, const MaterialPoint& characteristics, const Primitive* primitive);
 
     /**
      * Tests if a ray collides with objects in the scene

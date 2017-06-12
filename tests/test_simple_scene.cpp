@@ -216,7 +216,7 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_testCollision )
 BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_computeColor )
 {
   auto primitive = std::unique_ptr<Primitive>(new Sphere(Vector3df::Zero(), 3.f));
-  primitive->setDiffuse(1);
+  primitive->setDiffuseColor(Vector3df::Constant(1.f));
   auto primitive_ = primitive.get();
 
   auto light = std::unique_ptr<Light>(new Light(Vector3df::Constant(5.f), Vector3df::Constant(1.f)));
@@ -230,8 +230,8 @@ BOOST_AUTO_TEST_CASE( test_IRT_SimpleScene_computeColor )
   material.normal = Normal3df::Constant(1.);
   material.normal.normalize();
 
-  BOOST_CHECK((scene.computeColor(Vector3df::Constant(4.), material, primitive_) != Normal3df::Constant(0.f)));
-  BOOST_CHECK((scene.computeColor(Vector3df::Constant(-4.), material, primitive_) == Normal3df::Constant(0.f)));
+  BOOST_CHECK((scene.computeColor(Vector3df::Constant(4.), Vector3df::Constant(1.f),  material, primitive_) != Normal3df::Constant(0.f)));
+  BOOST_CHECK((scene.computeColor(Vector3df::Constant(-4.), Vector3df::Constant(1.f), material, primitive_) == Normal3df::Constant(0.f)));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

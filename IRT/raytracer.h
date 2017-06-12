@@ -59,7 +59,7 @@ namespace IRT
 
       MaterialPoint characteristics;
       primitive->computeColorNormal(ray, dist, characteristics);
-      color = scene->computeColor(ray.origin() + dist * ray.direction(), characteristics, primitive);
+      color = scene->computeColor(ray.origin() + dist * ray.direction(), ray.direction(), characteristics, primitive);
 
       if(level < levels)
       {

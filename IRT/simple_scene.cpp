@@ -14,7 +14,7 @@
 namespace IRT
 {
   SimpleScene::SimpleScene()
-    :primitives(), lights()
+    :primitives(), lights(), ambient_color(Color::Zero())
   {
     bb.corner1 = Point3df::Constant(std::numeric_limits<float>::max());
     bb.corner2 = Point3df::Constant(std::numeric_limits<float>::min());
@@ -70,6 +70,16 @@ namespace IRT
     return light;
   }
   
+  void SimpleScene::setAmbientColor(const Color& color)
+  {
+    this->ambient_color = color;
+  }
+
+  const Color& SimpleScene::getAmbientColor() const
+  {
+    return ambient_color;
+  }
+
   Primitive* SimpleScene::getFirstCollision(const Ray& ray, float& dist, float tnear, float tfar)
   {
     return tree.getFirstCollision<KDTree<Primitive>::DefaultTraversal>(ray, dist, tnear, tfar);
@@ -88,22 +98,30 @@ namespace IRT
     return dist;
   }
 
-  const Color SimpleScene::computeColor(const Point3df& center, const MaterialPoint& characteristics, const Primitive* primitive)
+  const Color SimpleScene::computeColor(const Point3df& center, const Vector3df& direction, const MaterialPoint& characteristics, const Primitive* primitive)
   {
-    Color t_color(Color::Zero());
+    Color t_color = getAmbientColor() + primitive->getEmissionColor();
     for(auto& light: lights)
     {
       Vector3df path = light->getCenter() - center;
       float pathSize = std::sqrt(norm2(path));
-      path = path.cwiseProduct(Vector3df::Constant(1/pathSize));
+      path = path.cwiseProduct(Vector3df::Constant(1 / pathSize));
+
+      Vector3df half = path + direction;
+      float halfSize = std::sqrt(norm2(half));
+      half = half.cwiseProduct(Vector3df::Constant(1 / halfSize));
+
       Ray ray(center, path);
       if(testCollision(ray, pathSize))
         continue;
 
-      float cosphi = path.dot(characteristics.normal) * primitive->getDiffuse();
-      if(cosphi < 0.)
-        continue;
-      t_color += (primitive->getColor() * cosphi).cwiseProduct(light->computeColor(ray, pathSize));
+      auto cosphi = path.dot(characteristics.normal);
+      if(cosphi >= 0.)
+        t_color += (primitive->getDiffuseColor() * cosphi).cwiseProduct(light->computeColor(ray, pathSize));
+      auto costheta = path.dot(characteristics.normal);
+      if (costheta >= 0.)
+        t_color += (primitive->getDiffuseColor() * std::pow(costheta, primitive->getShininess())).cwiseProduct(light->computeColor(ray, pathSize));
+
     }
 
     return t_color;

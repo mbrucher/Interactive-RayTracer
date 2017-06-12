@@ -55,37 +55,58 @@ namespace IRT
     virtual BoundingBox getBoundingBox() const = 0;
 
     /**
-     * Sets the color of the sphere
+    * Sets the color of the sphere (emission part)
+    * @param color is the color of the sphere
+    */
+    void setEmissionColor(const Color& color);
+
+    const Color& getEmissionColor() const;
+
+    /**
+     * Sets the color of the sphere (diffusion)
      * @param color is the color of the sphere
      */
-    void setColor(const Color& color);
+    void setDiffuseColor(const Color& color);
 
-    const Color& getColor() const;
+    const Color& getDiffuseColor() const;
+
+    /**
+    * Sets the color of the sphere (specular)
+    * @param color is the color of the sphere
+    */
+    void setSpecularColor(const Color& color);
+
+    const Color& getSpecularColor() const;
+
+    /**
+    * Sets the shininess parameters of the sphere
+    * @param shininess is the shininess factor of the sphere
+    */
+    void setShininess(DataType shininess);
+
+    DataType getShininess() const;
 
     /**
       * Sets the reflection parameters of the sphere
-      * @param reflection is the reflection "color" of the sphere
+      * @param reflection is the reflection factor of the sphere
       */
-    void setReflection(float reflection);
+    void setReflection(DataType reflection);
 
-    float getReflection() const;    
-    /**
-      * Sets the diffuse parameters of the sphere
-      * @param diffuse is the reflection "color" of the sphere
-      */
-    void setDiffuse(float diffuse);
-
-    float getDiffuse() const;
+    DataType getReflection() const;
 
     virtual std::unique_ptr<Primitive> clone() const = 0;
 
   protected:
     /// Color of the sphere
-    Color color;
+    Color emission_color;
+    /// Color of the sphere
+    Color diffuse_color;
+    /// Color of the sphere
+    Color specular_color;
+    /// Shininess factor of the sphere
+    DataType shininess;
     /// Reflection factor of the sphere
-    float reflection;
-    /// Diffuse factor of the sphere
-    float diffuse;
+    DataType reflection;
   };
 
   /// A simple sphere

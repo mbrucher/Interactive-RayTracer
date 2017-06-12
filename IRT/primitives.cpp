@@ -14,40 +14,59 @@ namespace IRT
   }
 
   Primitive::Primitive()
-  :color(Color::Constant(1.f)), reflection(0), diffuse(0)
+  : emission_color(Color::Zero()), diffuse_color(Color::Constant(1.f)), reflection(0)
   {
   }
 
-  void Primitive::setColor(const Color& color)
+  void Primitive::setDiffuseColor(const Color& color)
   {
-    this->color = color;
+    this->diffuse_color = color;
   }
 
-  const Color& Primitive::getColor() const
+  const Color& Primitive::getDiffuseColor() const
   {
-    return color;
+    return diffuse_color;
   }
 
-  void Primitive::setReflection(float reflection)
+  void Primitive::setEmissionColor(const Color& color)
+  {
+    this->emission_color = color;
+  }
+
+  const Color& Primitive::getEmissionColor() const
+  {
+    return emission_color;
+  }
+
+  void Primitive::setSpecularColor(const Color& color)
+  {
+    this->specular_color = color;
+  }
+
+  const Color& Primitive::getSpecularColor() const
+  {
+    return specular_color;
+  }
+
+  void Primitive::setReflection(DataType reflection)
   {
     this->reflection = reflection;
   }
 
-  float Primitive::getReflection() const
+  DataType Primitive::getReflection() const
   {
     return reflection;
   }
 
-  void Primitive::setDiffuse(float diffuse)
+  void Primitive::setShininess(DataType shininess)
   {
-    this->diffuse = diffuse;
+    this->shininess = shininess;
   }
 
-  float Primitive::getDiffuse() const
+  DataType Primitive::getShininess() const
   {
-    return diffuse;
+    return shininess;
   }
-
   Sphere::Sphere(const Point3df& center, DataType radius) :
     center(center), radius(radius)
   {

@@ -60,16 +60,9 @@ PYBIND11_PLUGIN(PythonIRT) {
   py::module m("PythonIRT", "Interactive RayTracer module");
 
   py::class_<Primitive>(m, "Primitive")
-    .def_property("color", [](const Primitive& instance)
-    {
-      return py::array_t<DataType>(3, instance.getColor().data());
-    }
-    ,
-    [](Primitive& instance, const py::array_t<DataType>& color)
-    {
-      instance.setColor(Eigen::Map<const Point3df>(color.data()));
-    })
-    .def_property("diffuse", &Primitive::getDiffuse, &Primitive::setDiffuse)
+    .def_property("emission_color", &Primitive::getEmissionColor, &Primitive::getEmissionColor)
+    .def_property("diffuse_color", &Primitive::getDiffuseColor, &Primitive::setDiffuseColor)
+    .def_property("specular_color", &Primitive::getSpecularColor, &Primitive::setSpecularColor)
     .def_property("reflection", &Primitive::getReflection, &Primitive::setReflection);
 
   py::class_<Sphere, Primitive>(m, "Sphere")
@@ -86,6 +79,7 @@ PYBIND11_PLUGIN(PythonIRT) {
 
   py::class_<SimpleScene>(m, "SimpleScene")
     .def(py::init<>())
+    .def_property("ambiant_color", &SimpleScene::getAmbientColor, &SimpleScene::setAmbientColor)
     .def("addPrimitive", [](SimpleScene& scene, const Primitive* primitive)
     {
       scene.addPrimitive(primitive->clone());
